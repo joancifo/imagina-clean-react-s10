@@ -9,6 +9,7 @@ import type { Order, User } from '../shared/types';
 import OrdersPage from './OrdersPage';
 import OrderDetailPage from './OrderDetailPage';
 import DashboardPage from './DashboardPage';
+import { createInMemoryAdapters, createOrdersModule, OrdersProvider, toOrder } from '../orders';
 
 vi.mock('../services/api');
 
@@ -37,12 +38,15 @@ function renderAt(path: string, user: User) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <AppStoreProvider>
-        <SeedUser user={user} />
-        <Routes>
-          <Route path="/" element={<OrdersPage />} />
-          <Route path="/orders/:id" element={<OrderDetailPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-        </Routes>
+        {/* Sesión 4: las pantallas reciben el módulo Pedidos por el Provider (aquí, con adapters en memoria). */}
+        <OrdersProvider module={createOrdersModule(createInMemoryAdapters(ORDERS.map(toOrder)))}>
+          <SeedUser user={user} />
+          <Routes>
+            <Route path="/" element={<OrdersPage />} />
+            <Route path="/orders/:id" element={<OrderDetailPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+          </Routes>
+        </OrdersProvider>
       </AppStoreProvider>
     </MemoryRouter>,
   );

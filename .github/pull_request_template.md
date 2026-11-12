@@ -14,4 +14,11 @@
 - [ ] Los errores previsibles se devuelven como `Result` y tienen mensaje en `ui/`.
 - [ ] El código heredado importa Pedidos solo desde `../orders` (`npm run lint:boundaries`).
 
+## Casos de uso y composición (Sesión 4)
+- [ ] Cada caso de uso nuevo tiene `Command` de entrada, `Result` de salida y puertos como dependencias.
+- [ ] Sus tests usan dobles escritos a mano (fake, stub o spy), sin `vi.mock` ni red.
+- [ ] Cada adapter nuevo tiene un fake que pasa el mismo test de contrato (`npm run test:contract`).
+- [ ] Las implementaciones concretas se eligen solo en `composition.ts` / `main.tsx`.
+- [ ] No hay instancias globales nuevas, parámetros por defecto con adapters reales ni registros tipo service locator.
+
 ## Cómo lo he comprobado

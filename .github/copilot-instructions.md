@@ -18,3 +18,9 @@ Este repositorio es material de formación con code smells intencionados en el c
 - El código de fuera de `src/orders` importa solo su API pública: `import { … } from '../orders'` (`npm run lint:boundaries`).
 - Comprueba cualquier propuesta con `npm run lint:arch`, `npm run test:arch` y `npm run lint:boundaries`.
 - No crees interfaces con una sola implementación si no cruzan un límite de capa.
+
+## Composición (Sesión 4)
+- Las implementaciones concretas se eligen solo en `src/orders/composition.ts` y se crean una vez en `src/main.tsx` (o en el test).
+- No exportes instancias globales de adapters ni uses parámetros por defecto con instancias reales.
+- React recibe casos de uso mediante `OrdersProvider`/`useOrdersModule()`. No crees registros globales ni hooks del tipo `useService('nombre')`.
+- No introduzcas contenedores IoC ni decoradores sin un ADR que lo justifique.

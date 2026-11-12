@@ -36,6 +36,9 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 | `npm run boundaries` | Imports entre carpetas y accesos que se saltan la API pública de Pedidos |
 | `npm run rules` | Candidatos a reglas de negocio escondidas fuera del dominio |
 | `npm run lint:boundaries` | El código heredado solo importa Pedidos desde `src/orders/index.ts` |
+| `npm run demo:tema7` | Casos de uso: reasignar pedido (asíncrono, 4 puertos) y presupuesto (síncrono) |
+| `npm run demo:tema8` | Adapters de almacenamiento con contrato, formas de inyección y composición en Node |
+| `npm run test:contract` | El mismo contrato de `OrderGateway` contra el fake en memoria y contra la API real |
 
 ## Material de la Sesión 1
 - `examples/tema1/` — ejemplos ejecutables del Tema 1
@@ -64,4 +67,15 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 - `prompts/sesion-3.md` — prompts de GitHub Copilot
 - `docs/ejercicio-s3.md` — ejercicio de la sesión
 
-Trabaja en una rama propia por sesión: `git checkout -b s3/<tu-nombre>`.
+## Material de la Sesión 4
+- `examples/tema7/` — casos de uso con dobles de prueba (asíncrono y síncrono) y el antipatrón del reenvío
+- `examples/tema8/` — puerto de almacenamiento con dos adapters, formas de inyección, Service Locator y ciclos de vida en Node
+- `src/orders/application/ports.ts` — puertos `OrderGateway`, `Clock` y `EventPublisher`
+- `src/orders/infrastructure/` — adapters HTTP y en memoria, reloj, analítica y test de contrato
+- `src/orders/composition.ts`, `src/orders/ui/OrdersProvider.tsx` y `src/main.tsx` — Composition Root
+- `server/app.mjs` — API ficticia reutilizable (`createApp`) que ya rechaza transiciones imposibles con 409
+- `docs/adr/002-inyeccion-de-dependencias.md` — decisión de composición (proyecto final)
+- `prompts/sesion-4.md` — prompts de GitHub Copilot
+- `docs/ejercicio-s4.md` — ejercicio de la sesión
+
+Trabaja en una rama propia por sesión: `git checkout -b s4/<tu-nombre>`.

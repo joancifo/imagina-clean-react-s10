@@ -33,12 +33,25 @@ describe('aplicación', () => {
   });
 });
 
+describe('reloj (Sesión 4)', () => {
+  it('ni el dominio ni la aplicación leen la hora del sistema', async () => {
+    expect(await errorsFor('src/orders/application/x.ts', 'export const at = () => new Date();')).toContain('no-restricted-syntax');
+    expect(await errorsFor('src/orders/domain/x.ts', 'export const at = () => Date.now();')).toContain('no-restricted-syntax');
+  });
+  it('sí pueden construir una fecha a partir de un dato', async () => {
+    expect(await errorsFor('src/orders/domain/x.ts', "export const at = (iso: string) => new Date(iso);")).toEqual([]);
+  });
+  it('la infraestructura sí puede (system-clock.ts)', async () => {
+    expect(await errorsFor('src/orders/infrastructure/x.ts', 'export const at = () => new Date();')).toEqual([]);
+  });
+});
+
 describe('presentación', () => {
   it('no puede importar infraestructura', async () => {
     expect(await errorsFor('src/orders/ui/x.ts', "import { createHttpOrderReader } from '../infrastructure/http-order-reader';")).toContain('no-restricted-imports');
   });
   it('sí puede importar casos de uso y la composición', async () => {
-    expect(await errorsFor('src/orders/ui/x.ts', "import { loadOrderSummary } from '../application/load-order-summary';\nimport { orderReader } from '../composition';\nexport const g = [loadOrderSummary, orderReader];")).toEqual([]);
+    expect(await errorsFor('src/orders/ui/x.ts', "import { loadOrderSummary } from '../application/load-order-summary';\nimport { createOrdersModule } from '../composition';\nexport const g = [loadOrderSummary, createOrdersModule];")).toEqual([]);
   });
 });
 

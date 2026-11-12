@@ -11,6 +11,11 @@ const BROWSER_GLOBALS = ['window', 'document', 'localStorage', 'sessionStorage',
   name,
   message: `"${name}" es un detalle del entorno: accede a él desde infraestructura, detrás de un puerto.`,
 }));
+// Sesión 4 · El reloj es un puerto (Clock): el núcleo no lee la hora del sistema.
+const NO_SYSTEM_CLOCK = [
+  { selector: "NewExpression[callee.name='Date'][arguments.length=0]", message: 'El núcleo no lee la hora del sistema: recibe un Clock (application/ports.ts) o la fecha por parámetro.' },
+  { selector: "CallExpression[callee.object.name='Date'][callee.property.name='now']", message: 'El núcleo no lee la hora del sistema: recibe un Clock (application/ports.ts) o la fecha por parámetro.' },
+];
 const layer = (name) => ({ group: [`**/${name}`, `**/${name}/**`], message: `Esta capa no puede importar de "${name}".` });
 const composition = { group: ['**/composition'], message: 'Solo la presentación usa la composición.' };
 
@@ -23,6 +28,7 @@ export default tseslint.config(
     rules: {
       'no-restricted-imports': ['error', { patterns: [FRAMEWORKS, layer('application'), layer('infrastructure'), layer('ui'), composition] }],
       'no-restricted-globals': ['error', ...BROWSER_GLOBALS],
+      'no-restricted-syntax': ['error', ...NO_SYSTEM_CLOCK],
     },
   },
 
@@ -32,6 +38,7 @@ export default tseslint.config(
     rules: {
       'no-restricted-imports': ['error', { patterns: [FRAMEWORKS, layer('infrastructure'), layer('ui'), composition] }],
       'no-restricted-globals': ['error', ...BROWSER_GLOBALS],
+      'no-restricted-syntax': ['error', ...NO_SYSTEM_CLOCK],
     },
   },
 

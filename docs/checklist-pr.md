@@ -20,4 +20,14 @@ Cada pregunta se responde con evidencia (`ruta:línea`, salida de un comando o u
 | ¿Las transiciones son inmutables? | Mutar el pedido recibido | Test con `Object.freeze` |
 | ¿Se respeta la API pública de la feature? | `import … from '../orders/domain/…'` desde fuera | `npm run lint:boundaries` |
 
-Fuentes: R. C. Martin, *Clean Architecture* (2017), caps. 7–11; E. Evans, *Domain-Driven Design* (2003); V. Vernon, *Implementing Domain-Driven Design* (2013); documentación de ESLint (`no-restricted-imports`, `no-restricted-globals`); TypeScript 4.9 (`satisfies`).
+## Casos de uso y composición (Sesión 4)
+| Pregunta | Señal de alarma | Comprobación |
+|---|---|---|
+| ¿El caso de uso expresa una intención de producto? | Una función que solo reenvía a un puerto | Nombre en lenguaje de negocio; algo que orquestar |
+| ¿Entrada y salida son explícitas? | Parámetros sueltos, `any`, excepciones para errores previsibles | Tipo `Command` y `Result<…, Error>` |
+| ¿Los errores se distinguen por origen? | `catch` genérico que lo convierte todo en un mensaje | Test de error inesperado que se propaga |
+| ¿Las dependencias se ven en la firma? | Instancias globales, parámetros por defecto, `useService('…')` | `grep` de exports de instancias; test sin `vi.mock` |
+| ¿El fake es fiel? | Un fake que nunca falla o acepta lo que el backend rechaza | `npm run test:contract` |
+| ¿La composición vive en un solo sitio? | `createHttp…` o `fetch` fuera de `composition.ts` / `main.tsx` | `grep -rn "createHttp" src` |
+
+Fuentes: R. C. Martin, *Clean Architecture* (2017), caps. 7–11; E. Evans, *Domain-Driven Design* (2003); V. Vernon, *Implementing Domain-Driven Design* (2013); documentación de ESLint (`no-restricted-imports`, `no-restricted-globals`); TypeScript 4.9 (`satisfies`); A. Cockburn, *Hexagonal Architecture* (2005); M. Seemann y S. van Deursen, *Dependency Injection Principles, Practices, and Patterns* (2019); G. Meszaros, *xUnit Test Patterns* (2007).

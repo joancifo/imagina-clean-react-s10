@@ -4,6 +4,7 @@ import OrdersPage from './OrdersPage';
 import { AppStoreProvider, useAppStore } from '../store/appStore';
 import * as api from '../services/api';
 import { useEffect } from 'react';
+import { createInMemoryAdapters, createOrdersModule, OrdersProvider } from '../orders';
 
 vi.mock('../services/api');
 
@@ -22,8 +23,10 @@ function renderPage() {
   return render(
     <MemoryRouter>
       <AppStoreProvider>
-        <SeedUser />
-        <OrdersPage />
+        <OrdersProvider module={createOrdersModule(createInMemoryAdapters())}>
+          <SeedUser />
+          <OrdersPage />
+        </OrdersProvider>
       </AppStoreProvider>
     </MemoryRouter>,
   );

@@ -6,7 +6,7 @@ src/orders/
 ├── application/      Casos de uso y puertos (interfaces que el núcleo necesita)
 ├── infrastructure/   Adapters: HTTP, memoria, storage, analytics + DTO y mappers
 ├── ui/               Hooks adaptadores, view models y componentes
-├── composition.ts    Elige implementaciones concretas y las conecta
+├── composition.ts    Fábricas: createOrdersModule (casos de uso) y createHttpAdapters / createInMemoryAdapters
 └── index.ts          API pública: lo único que el resto de la app puede importar
 ```
 
@@ -19,6 +19,24 @@ src/orders/
 | `composition.ts` | Frameworks y drivers / main | todo | — |
 
 Reglas automáticas: `eslint.architecture.js` (`npm run lint:arch`) y su test (`npm run test:arch`); `eslint.boundaries.js` (`npm run lint:boundaries`) para la API pública.
+
+El módulo se crea **una vez** en `src/main.tsx` (Composition Root) y llega a React con `OrdersProvider`. Los tests son otro Composition Root: crean el módulo con `createInMemoryAdapters`.
+
+## Mapa de puertos (Sesión 4)
+| Puerto | Lo necesita | Adapter real | Fake | Se compone en |
+|---|---|---|---|---|
+| `OrderReader` | `loadOrderSummary`, `listUrgentOrders` | `http-order-reader.ts` | `in-memory-order-gateway.ts` (`findAll`) | `composition.ts` |
+| `OrderGateway` | `cancelOrder` | `http-order-gateway.ts` | `in-memory-order-gateway.ts` | `composition.ts` |
+| `Clock` | `cancelOrder` | `system-clock.ts` | `fixedClock(…)` o un literal | `composition.ts` |
+| `EventPublisher` | `cancelOrder` | `analytics-event-publisher.ts` | `in-memory-event-publisher.ts` | `composition.ts` |
+
+### Mi mapa de puertos (tarea antes de la Sesión 5)
+Candidatos en el código heredado: filtros en `localStorage`, usuario activo (`userId`), navegación, avisos (toast), analítica de aprobación. Para cada uno decide si merece puerto o no y por qué.
+
+| Dependencia | Evidencia `ruta:línea` | ¿Puerto? | Adapter real / fake | Motivo |
+|---|---|---|---|---|
+| Filtros guardados | `src/pages/OrdersPage.tsx` · Efecto 1 | Sí | `localStorage` / memoria | JSON corrupto rompe la pantalla; SSR y tests sin `localStorage` |
+| | | | | |
 
 ## Mi clasificación del código heredado (tarea antes de la Sesión 3)
 Copia este archivo como `docs/arquitectura-<tu-nombre>.md` y completa la tabla.
