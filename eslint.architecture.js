@@ -50,9 +50,31 @@ export default tseslint.config(
     },
   },
 
+  // Sesión 5 · PRESENTACIÓN PURA: view models, criterios, estado y navegación (ui/orders-*.ts) no dependen de React ni del router.
+  {
+    files: ['src/orders/ui/orders-*.ts'],
+    ignores: ['**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: [layer('infrastructure'), { group: ['react', 'react-dom', 'react-dom/*', 'react-router', 'react-router-dom'], message: 'Un view model es una función pura: sin React y sin router. Así se prueba sin renderizar.' }] }],
+    },
+  },
+
+  // Sesión 5 · COMPONENTES PRESENTACIONALES: reciben datos y callbacks por props; no se conectan a nada.
+  {
+    files: ['src/orders/ui/components/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: [
+        layer('infrastructure'), layer('application'), composition,
+        { group: ['react-router', 'react-router-dom'], message: 'Un componente presentacional no navega: avisa con un callback (onOpen, onChange…).' },
+        { group: ['**/OrdersProvider', '**/use[A-Z]*'], message: 'Un componente presentacional no se conecta a datos ni a casos de uso: los recibe por props.' },
+      ] }],
+    },
+  },
+
   // PRESENTACIÓN: usa casos de uso y la composición; nunca un adapter concreto.
   {
     files: ['src/orders/ui/**/*.{ts,tsx}'],
+    ignores: ['src/orders/ui/orders-*.ts', 'src/orders/ui/components/**'],
     rules: {
       'no-restricted-imports': ['error', { patterns: [layer('infrastructure'), { group: ['axios'], message: 'La presentación no habla HTTP: usa un caso de uso.' }] }],
     },

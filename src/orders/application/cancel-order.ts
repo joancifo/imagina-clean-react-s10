@@ -13,7 +13,8 @@ export type CancelOrderCommand = { orderId: string; reason: string; actor: Actor
 /** Todos los fallos PREVISIBLES, por origen: entrada (ReasonError), regla (CancellationDenied) e infraestructura (GatewayFailure). */
 export type CancelOrderError = ReasonError | CancellationDenied | GatewayFailure;
 
-export type CancelOrderDeps = { orders: OrderGateway; clock: Clock; events: EventPublisher };
+// Sesión 5 · Interface Segregation: este caso de uso declara solo las operaciones del puerto que usa.
+export type CancelOrderDeps = { orders: Pick<OrderGateway, 'findById' | 'cancel'>; clock: Clock; events: EventPublisher };
 
 export type CancelOrder = (command: CancelOrderCommand) => Promise<Result<Order, CancelOrderError>>;
 

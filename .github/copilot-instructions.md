@@ -24,3 +24,11 @@ Este repositorio es material de formación con code smells intencionados en el c
 - No exportes instancias globales de adapters ni uses parámetros por defecto con instancias reales.
 - React recibe casos de uso mediante `OrdersProvider`/`useOrdersModule()`. No crees registros globales ni hooks del tipo `useService('nombre')`.
 - No introduzcas contenedores IoC ni decoradores sin un ADR que lo justifique.
+
+## Presentación y estado (Sesión 5)
+- Una pantalla se divide en contenedor (`ui/*Page.tsx`), view model puro (`ui/orders-*.ts`) y componentes presentacionales (`ui/components/`).
+- No guardes estado derivado: lo que se puede calcular a partir de props o de otro estado se calcula en el render. No propongas `useEffect` para sincronizar dos estados.
+- Filtros, orden y paginación viven en la URL (`useSearchParams`), no en stores globales ni en `localStorage`.
+- Los permisos de acceso son reglas de `domain/permissions.ts`; las rutas las aplican con `RequireAccess` (`src/shell`).
+- No añadas librerías de estado o de caché sin un ADR. `examples/tema10/server-state.tsx` muestra el patrón aceptado si se adopta TanStack Query.
+- Comprueba con `npm run lint:arch`, `npm run state` y los tests de `src/shell/AppRoutes.test.tsx`.

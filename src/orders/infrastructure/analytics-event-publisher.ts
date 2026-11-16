@@ -3,7 +3,15 @@
 // Traduce el evento de dominio al formato del proveedor: si mañana cambia el proveedor, cambia este archivo.
 import type { DomainEvent, EventPublisher } from '../application/ports';
 
-const NAMES: Record<DomainEvent['type'], string> = { OrderCancelled: 'order_cancelled' };
+/** Un traductor por tipo de evento. El switch es exhaustivo: un evento nuevo sin traducción no compila. */
+function toLog(event: DomainEvent): { name: string; payload: Record<string, unknown> } {
+  switch (event.type) {
+    case 'OrderCancelled':
+      return { name: 'order_cancelled', payload: { id: event.orderId, by: event.cancelledBy, reason: event.reason, at: event.occurredAt } };
+    case 'OrderApproved':
+      return { name: 'order_approved', payload: { id: event.orderId, by: event.approvedBy, total: event.total, at: event.occurredAt } };
+  }
+}
 
 export function createAnalyticsEventPublisher(fetchFn: typeof fetch = fetch, baseUrl = '/api'): EventPublisher {
   return {
@@ -11,7 +19,7 @@ export function createAnalyticsEventPublisher(fetchFn: typeof fetch = fetch, bas
       const response = await fetchFn(`${baseUrl}/logs`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ level: 'info', name: NAMES[event.type], payload: { id: event.orderId, by: event.cancelledBy, reason: event.reason, at: event.occurredAt } }),
+        body: JSON.stringify({ level: 'info', ...toLog(event) }),
       });
       if (!response.ok) throw new Error(`Analítica no disponible (HTTP ${response.status})`);
     },

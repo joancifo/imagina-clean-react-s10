@@ -63,6 +63,20 @@ export function describeOrderGatewayContract(name: string, factory: GatewayFacto
       expect(await failureOf(gateway.cancel({ orderId: 'P-1001', reason: REASON, cancelledBy: 'u1' }))).toBe('conflict');
     });
 
+    // Sesión 5 · approve
+    it('approve de un pendiente: después el pedido está aprobado', async () => {
+      await gateway.approve({ orderId: 'P-1005', approvedBy: 'u2' });
+      expect((await gateway.findById('P-1005'))?.status).toBe('approved');
+    });
+
+    it('approve de un pedido que no está pendiente es conflict', async () => {
+      expect(await failureOf(gateway.approve({ orderId: 'P-1002', approvedBy: 'u1' }))).toBe('conflict');
+    });
+
+    it('approve de un pedido que no existe es not-found', async () => {
+      expect(await failureOf(gateway.approve({ orderId: 'P-9999', approvedBy: 'u1' }))).toBe('not-found');
+    });
+
     it('cancel de un pedido que no existe es not-found', async () => {
       expect(await failureOf(gateway.cancel({ orderId: 'P-9999', reason: REASON, cancelledBy: 'u1' }))).toBe('not-found');
     });

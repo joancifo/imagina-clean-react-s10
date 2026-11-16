@@ -55,6 +55,24 @@ describe('presentación', () => {
   });
 });
 
+describe('presentación (Sesión 5)', () => {
+  it('un view model (ui/orders-*.ts) no puede importar React ni el router', async () => {
+    expect(await errorsFor('src/orders/ui/orders-x.ts', "import { useMemo } from 'react';")).toContain('no-restricted-imports');
+    expect(await errorsFor('src/orders/ui/orders-x.ts', "import { useSearchParams } from 'react-router-dom';")).toContain('no-restricted-imports');
+  });
+  it('un view model sí puede importar el dominio', async () => {
+    expect(await errorsFor('src/orders/ui/orders-x.ts', "import { isUrgent } from '../domain/order';\nexport const f = isUrgent;")).toEqual([]);
+  });
+  it('un componente presentacional no navega ni se conecta a datos o casos de uso', async () => {
+    expect(await errorsFor('src/orders/ui/components/X.tsx', "import { useNavigate } from 'react-router-dom';")).toContain('no-restricted-imports');
+    expect(await errorsFor('src/orders/ui/components/X.tsx', "import { useOrdersList } from '../useOrdersList';")).toContain('no-restricted-imports');
+    expect(await errorsFor('src/orders/ui/components/X.tsx', "import { useOrdersModule } from '../OrdersProvider';")).toContain('no-restricted-imports');
+  });
+  it('un componente presentacional sí puede usar React y los tipos del view model', async () => {
+    expect(await errorsFor('src/orders/ui/components/X.tsx', "import { useState } from 'react';\nimport type { OrderRowViewModel } from '../orders-list-view-model';\nexport type P = OrderRowViewModel; export const f = useState;")).toEqual([]);
+  });
+});
+
 it('el código real de src/orders cumple las reglas', async () => {
   const results = await eslint.lintFiles(['src/orders']);
   const errors = results.flatMap((r) => r.messages.map((m) => `${r.filePath}:${m.line} ${m.message}`));

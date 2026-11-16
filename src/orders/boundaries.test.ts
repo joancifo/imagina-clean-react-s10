@@ -20,7 +20,7 @@ describe('API pública de Pedidos', () => {
   });
 
   it('el código heredado real cumple la regla', async () => {
-    const results = await eslint.lintFiles(['src/pages', 'src/components', 'src/hooks', 'src/store', 'src/shared', 'src/services']);
+    const results = await eslint.lintFiles(['src/pages', 'src/components', 'src/hooks', 'src/store', 'src/shared', 'src/services', 'src/shell']);
     const errors = results.flatMap((r) => r.messages.map((m) => `${r.filePath}:${m.line} ${m.message}`));
     expect(errors).toEqual([]);
   });

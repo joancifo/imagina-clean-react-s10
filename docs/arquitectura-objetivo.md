@@ -5,7 +5,7 @@ src/orders/
 ├── domain/           Entidades, tipos y reglas del negocio (TypeScript puro)
 ├── application/      Casos de uso y puertos (interfaces que el núcleo necesita)
 ├── infrastructure/   Adapters: HTTP, memoria, storage, analytics + DTO y mappers
-├── ui/               Hooks adaptadores, view models y componentes
+├── ui/               Contenedores, hooks, view models puros (orders-*.ts) y components/ (presentacionales)
 ├── composition.ts    Fábricas: createOrdersModule (casos de uso) y createHttpAdapters / createInMemoryAdapters
 └── index.ts          API pública: lo único que el resto de la app puede importar
 ```
@@ -36,6 +36,26 @@ Candidatos en el código heredado: filtros en `localStorage`, usuario activo (`u
 | Dependencia | Evidencia `ruta:línea` | ¿Puerto? | Adapter real / fake | Motivo |
 |---|---|---|---|---|
 | Filtros guardados | `src/pages/OrdersPage.tsx` · Efecto 1 | Sí | `localStorage` / memoria | JSON corrupto rompe la pantalla; SSR y tests sin `localStorage` |
+| | | | | |
+
+## Mapa de estado (Sesión 5)
+| Estado | Tipo | Dónde vive | Antes |
+|---|---|---|---|
+| Búsqueda, estado, «solo míos», orden | URL | `useOrdersCriteria` + `orders-criteria.ts` | Store global + `localStorage` + 2 efectos |
+| Pedidos | Servidor | `useOrdersList` (reducer + caso de uso `listOrders`) | Store global, cargado en `useOrders` |
+| Lista filtrada, contadores, acciones de fila | Derivado | `buildOrdersListViewModel` (se calcula) | 4 `useState` + 2 efectos |
+| Modo compacto, pedido que se está cancelando, texto del motivo | Local de UI | `useState` en `OrdersListPage` y `CancelDialog` | `useState` en `OrdersPage` |
+| Sesión (usuario) | Global | `src/store/appStore.tsx` → `src/shell/session.ts` | Igual |
+| Aviso (toast) | Global | Store + `src/shell/ToastHost.tsx` | Store, pintado solo por la lista |
+
+Reglas automáticas nuevas en `eslint.architecture.js`: `ui/orders-*.ts` no importa React ni el router; `ui/components/**` no importa el router, `OrdersProvider`, hooks `use…` ni la aplicación.
+
+### Mi mapa de estado (tarea antes de la Sesión 6)
+Clasifica el estado de `OrderDetailPage.tsx` y `DashboardPage.tsx` (`npm run state`).
+
+| Estado | Evidencia `ruta:línea` | Tipo | Destino | Motivo |
+|---|---|---|---|---|
+| `total` del detalle | `src/pages/OrderDetailPage.tsx` · segundo `useEffect` | Derivado | View model | Se calcula a partir de `order` |
 | | | | | |
 
 ## Mi clasificación del código heredado (tarea antes de la Sesión 3)

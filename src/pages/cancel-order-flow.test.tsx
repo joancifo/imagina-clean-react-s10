@@ -9,6 +9,7 @@ import { AppStoreProvider, useAppStore } from '../store/appStore';
 import type { Order, User } from '../shared/types';
 import { createInMemoryAdapters, createOrdersModule, OrdersProvider, toOrder } from '../orders';
 import OrdersPage from './OrdersPage';
+import { ToastHost } from '../shell/ToastHost';
 
 vi.mock('../services/api');
 
@@ -30,6 +31,7 @@ function renderOrders(backendState: Order) {
         <OrdersProvider module={createOrdersModule(adapters)}>
           <SeedUser user={MANAGER} />
           <OrdersPage />
+          <ToastHost />
         </OrdersProvider>
       </AppStoreProvider>
     </MemoryRouter>,

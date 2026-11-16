@@ -21,4 +21,12 @@
 - [ ] Las implementaciones concretas se eligen solo en `composition.ts` / `main.tsx`.
 - [ ] No hay instancias globales nuevas, parámetros por defecto con adapters reales ni registros tipo service locator.
 
+## Presentación y estado (Sesión 5)
+- [ ] El JSX no calcula, no formatea y no compara roles: recibe un view model (función pura con tests sin render).
+- [ ] No hay estado derivado en `useState` ni `useEffect` que lo sincronice (`npm run state`).
+- [ ] La pantalla trata loading, error, empty y success.
+- [ ] Lo que se debe poder compartir o recargar (filtros, orden, página) está en la URL.
+- [ ] El acceso a la pantalla lo decide un guard con una regla del dominio, no la propia pantalla.
+- [ ] Tests heredados borrados: indico qué test nuevo protege ese comportamiento.
+
 ## Cómo lo he comprobado

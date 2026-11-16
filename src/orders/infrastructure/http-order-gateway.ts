@@ -38,5 +38,12 @@ export function createHttpOrderGateway(fetchFn: typeof fetch = fetch, baseUrl = 
       });
       if (!response.ok) throw failureFor(response);
     },
+    async approve({ orderId, approvedBy }) {
+      const response = await send(fetchFn, `${baseUrl}/orders/${encodeURIComponent(orderId)}/approve`, {
+        method: 'POST',
+        headers: { 'x-user-id': approvedBy },
+      });
+      if (!response.ok) throw failureFor(response);
+    },
   };
 }

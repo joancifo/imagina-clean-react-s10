@@ -30,4 +30,15 @@ Cada pregunta se responde con evidencia (`ruta:línea`, salida de un comando o u
 | ¿El fake es fiel? | Un fake que nunca falla o acepta lo que el backend rechaza | `npm run test:contract` |
 | ¿La composición vive en un solo sitio? | `createHttp…` o `fetch` fuera de `composition.ts` / `main.tsx` | `grep -rn "createHttp" src` |
 
-Fuentes: R. C. Martin, *Clean Architecture* (2017), caps. 7–11; E. Evans, *Domain-Driven Design* (2003); V. Vernon, *Implementing Domain-Driven Design* (2013); documentación de ESLint (`no-restricted-imports`, `no-restricted-globals`); TypeScript 4.9 (`satisfies`); A. Cockburn, *Hexagonal Architecture* (2005); M. Seemann y S. van Deursen, *Dependency Injection Principles, Practices, and Patterns* (2019); G. Meszaros, *xUnit Test Patterns* (2007).
+## Presentación y estado (Sesión 5)
+| Pregunta | Señal de alarma | Comprobación |
+|---|---|---|
+| ¿El JSX solo pinta? | Cálculos, formateos o `role === …` dentro del JSX | View model puro con tests sin render |
+| ¿Las props hablan el lenguaje de la pantalla? | `ord_st`, `isAdmin`, `showTotal` y más de 3 booleanos | Props con datos ya preparados; composición |
+| ¿Se tratan los cuatro estados? | Una lista en blanco mientras carga o cuando falla | Tests de loading, error, empty y success |
+| ¿Hay estado derivado guardado? | `useState` + `useEffect` que llama a un `set…` | `npm run state`; calcular en el render |
+| ¿Cada estado vive en su sitio? | Filtros en un store global; datos de servidor copiados | Tabla «Mapa de estado» de `docs/arquitectura-objetivo.md` |
+| ¿La URL reproduce lo que se ve? | Recargar pierde filtros o paginación | Abrir el enlace en otra pestaña |
+| ¿Los permisos de acceso están en un sitio? | `if (user.role …) return null` dentro de la pantalla | Guard + regla del dominio; test del mapa de rutas |
+
+Fuentes: R. C. Martin, *Clean Architecture* (2017), caps. 7–11; E. Evans, *Domain-Driven Design* (2003); V. Vernon, *Implementing Domain-Driven Design* (2013); documentación de ESLint (`no-restricted-imports`, `no-restricted-globals`); TypeScript 4.9 (`satisfies`); A. Cockburn, *Hexagonal Architecture* (2005); M. Seemann y S. van Deursen, *Dependency Injection Principles, Practices, and Patterns* (2019); G. Meszaros, *xUnit Test Patterns* (2007); react.dev («You Might Not Need an Effect», «Choosing the State Structure», «Reusing Logic with Custom Hooks»); documentación de React Router (`useSearchParams`) y de TanStack Query.

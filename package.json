@@ -1,7 +1,7 @@
 {
   "name": "orderdesk",
   "private": true,
-  "version": "0.12.0",
+  "version": "0.13.0",
   "type": "module",
   "description": "Backoffice de pedidos ficticio con code smells sembrados para el curso de Clean Architecture",
   "scripts": {
@@ -27,13 +27,18 @@
     "lint:boundaries": "eslint --config eslint.boundaries.js src",
     "demo:tema7": "vitest run examples/tema7",
     "demo:tema8": "vitest run examples/tema8",
-    "test:contract": "vitest run src/orders/infrastructure/order-gateway.contract.test.ts"
+    "test:contract": "vitest run src/orders/infrastructure/order-gateway.contract.test.ts",
+    "demo:tema9": "vitest run examples/tema9",
+    "demo:tema10": "vitest run examples/tema10",
+    "state": "node scripts/state-map.mjs",
+    "unused": "knip --files --no-exit-code"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.107.1",
     "axios": "^1.7.9",
     "classnames": "^2.5.1",
     "express": "^4.21.2",
-    "lodash": "^4.17.21",
+    "lodash": "^4.18.1",
     "moment": "^2.30.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -43,7 +48,7 @@
     "@eslint/js": "^9.17.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
-    "@types/lodash": "^4.17.13",
+    "@types/lodash": "^4.17.27",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",

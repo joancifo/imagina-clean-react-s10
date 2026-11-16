@@ -21,7 +21,7 @@ const anOrder = (id: string, status: OrderStatus = 'pending', unitPrice = 1000):
 function createFakeGateway(orders: Order[], failOn: Partial<Record<'findById' | 'cancel', Error>> = {}) {
   const calls: string[] = [];
   const cancelled: CancelRequest[] = [];
-  const gateway: OrderGateway = {
+  const gateway: Pick<OrderGateway, 'findById' | 'cancel'> = {
     async findById(id) {
       calls.push(`findById:${id}`);
       if (failOn.findById) throw failOn.findById;

@@ -11,7 +11,7 @@ import { canCancel, toActor, toOrder, useCancelOrder } from '../orders';
 export default function OrdersPage() {
   const navigate = useNavigate();
   const { orders, setOrders, loading } = useOrders();
-  const { user, filters, setFilters, toast, setToast } = useAppStore();
+  const { user, filters, setFilters, setToast } = useAppStore();
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [pendingCount, setPendingCount] = useState(0);
   const [pendingAmount, setPendingAmount] = useState(0);
@@ -54,12 +54,7 @@ export default function OrdersPage() {
     setUrgentCount(pending.filter((o) => (o.total ?? 0) > 3000).length);
   }, [filteredOrders]);
 
-  // Efecto 5: el aviso desaparece solo.
-  useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(null), 3000);
-    return () => clearTimeout(t);
-  }, [toast]);
+  // Efecto 5 (el aviso desaparece solo): movido a src/shell/ToastHost.tsx como preparación de la Sesión 5.
 
   // Regla oficial de cancelación: vive en el dominio (src/orders/domain/cancellation.ts).
   const actor = toActor(user);
@@ -200,7 +195,6 @@ export default function OrdersPage() {
           <button onClick={() => setReasonFor(null)}>Volver</button>
         </div>
       )}
-      {toast && <div className="toast">{toast}</div>}
     </main>
   );
 }

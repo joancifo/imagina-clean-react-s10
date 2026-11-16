@@ -7,6 +7,7 @@ body { font-family: system-ui, sans-serif; margin: 0; color: #1c2a44; }
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: 8px; border-bottom: 1px solid #dde3ee; }
 .order-row--urgent { background: #fff3e0; }
+.order-row--muted { background: #eee; }
 .order-row__total { font-weight: 700; }
 .badge { padding: 2px 8px; border-radius: 10px; background: #e7edf7; }
 .badge--danger { background: #ffd9d9; }

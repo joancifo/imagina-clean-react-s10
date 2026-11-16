@@ -39,6 +39,10 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 | `npm run demo:tema7` | Casos de uso: reasignar pedido (asíncrono, 4 puertos) y presupuesto (síncrono) |
 | `npm run demo:tema8` | Adapters de almacenamiento con contrato, formas de inyección y composición en Node |
 | `npm run test:contract` | El mismo contrato de `OrderGateway` contra el fake en memoria y contra la API real |
+| `npm run demo:tema9` | Presentacional con cuatro estados, composición, view model y hooks de UI |
+| `npm run demo:tema10` | Estado derivado, máquina de estados, URL como fuente de verdad y caché de servidor |
+| `npm run state` | Mapa de `useState`, `useEffect`, store global, URL y `localStorage` por archivo |
+| `npm run unused` | Archivos que ya no importa nadie (knip) |
 
 ## Material de la Sesión 1
 - `examples/tema1/` — ejemplos ejecutables del Tema 1
@@ -78,4 +82,15 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 - `prompts/sesion-4.md` — prompts de GitHub Copilot
 - `docs/ejercicio-s4.md` — ejercicio de la sesión
 
-Trabaja en una rama propia por sesión: `git checkout -b s4/<tu-nombre>`.
+## Material de la Sesión 5
+- `examples/tema9/` — componente presentacional con cuatro estados, composición frente a flags, view model del detalle y hooks de UI
+- `examples/tema10/` — estado derivado con y sin efecto, flujo de cancelación como máquina de estados, paginación en la URL y TanStack Query sobre casos de uso
+- `src/orders/ui/` — `OrdersListPage` (contenedor), `components/` (presentacionales), view model, criterios de URL y hook de datos
+- `src/orders/domain/approval.ts`, `permissions.ts` y `credit-risk.ts` — reglas que antes vivían en la pantalla
+- `src/shell/` — mapa de rutas, guard `RequireAccess`, páginas 403 y 404, sesión y avisos
+- `scripts/state-map.mjs` — mapa de estado y efectos (`npm run state`)
+- `docs/adr/003-estado-y-presentacion.md` — decisión de estado y presentación (proyecto final)
+- `prompts/sesion-5.md` — prompts de GitHub Copilot
+- `docs/ejercicio-s5.md` — ejercicio de la sesión
+
+Trabaja en una rama propia por sesión: `git checkout -b s5/<tu-nombre>`.

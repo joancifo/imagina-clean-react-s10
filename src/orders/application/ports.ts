@@ -1,6 +1,7 @@
 // APLICACIÓN · Puertos: contratos que el núcleo necesita y que la infraestructura implementa.
 // Un puerto se escribe en el lenguaje del caso de uso que lo necesita, no en el de la tecnología que lo implementa.
 import type { CancellationReason } from '../domain/cancellation-reason';
+import type { OrderApproved } from '../domain/approval';
 import type { OrderCancelled } from '../domain/cancellation';
 import type { Order } from '../domain/order';
 
@@ -33,6 +34,7 @@ export class OrderGatewayError extends Error {
 }
 
 export type CancelRequest = { orderId: string; reason: CancellationReason; cancelledBy: string };
+export type ApproveRequest = { orderId: string; approvedBy: string };
 
 export interface OrderGateway {
   /** El pedido o null si no existe. Lanza OrderGatewayError('unavailable') si no puede saberlo. */
@@ -42,6 +44,8 @@ export interface OrderGateway {
    * Lanza OrderGatewayError: 'not-found' si no existe · 'conflict' si su estado ya no lo permite · 'unavailable' si no hay respuesta útil.
    */
   cancel(request: CancelRequest): Promise<void>;
+  /** Sesión 5 · Pide al backend que apruebe el pedido. Mismos fallos que cancel. */
+  approve(request: ApproveRequest): Promise<void>;
 }
 
 // ── Detalles del entorno convertidos en puertos (Sesión 4) ────────────────────────
@@ -50,7 +54,7 @@ export interface Clock {
   now(): Date;
 }
 
-export type DomainEvent = OrderCancelled;
+export type DomainEvent = OrderCancelled | OrderApproved;
 
 /** Publica hechos ya ocurridos (analítica, auditoría…). Quien publica no sabe quién escucha. */
 export interface EventPublisher {

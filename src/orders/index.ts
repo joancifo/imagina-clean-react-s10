@@ -18,7 +18,13 @@ export type { CancelOrderCommand, CancelOrderError } from './application/cancel-
 export { useCancelOrder, type CancelOutcome } from './ui/useCancelOrder';
 export { useOrderSummary } from './ui/useOrderSummary';
 
+// Sesión 5 · capa de presentación: pantalla de la lista, permisos de acceso y aprobación
+export { OrdersListPage } from './ui/OrdersListPage';
+export { canSeeAmounts, canViewDashboard, canViewOrders } from './domain/permissions';
+export { useApproveOrder, type ApproveOutcome } from './ui/useApproveOrder';
+export type { ApproveOrderCommand, ApproveOrderError } from './application/approve-order';
+
 // Puente TEMPORAL para el código heredado (src/pages…): traduce sus modelos al dominio.
-// Desaparece cuando las pantallas se migren a src/orders/ui (Sesión 5).
+// Sesión 5: la lista ya no lo usa. Desaparece cuando se migren el detalle y el panel (proyecto final).
 export { toOrder } from './infrastructure/order-mapper';
 export { toActor } from './infrastructure/actor-mapper';

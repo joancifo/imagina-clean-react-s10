@@ -3,7 +3,7 @@
 // Documentación: https://eslint.org/docs/latest/rules/no-restricted-imports
 import tseslint from 'typescript-eslint';
 
-const LEGACY = ['pages', 'components', 'hooks', 'store', 'shared', 'services'].map((dir) => `src/${dir}/**/*.{ts,tsx}`);
+const LEGACY = ['pages', 'components', 'hooks', 'store', 'shared', 'services', 'shell'].map((dir) => `src/${dir}/**/*.{ts,tsx}`);
 
 export default tseslint.config(
   // El plugin se registra para que los comentarios «eslint-disable» del heredado se reconozcan.

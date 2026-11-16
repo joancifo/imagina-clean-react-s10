@@ -23,5 +23,11 @@ export function createInMemoryOrderGateway(seed: Order[] = []): OrderGateway & O
       if (!CANCELLABLE.includes(order.status)) throw new OrderGatewayError('conflict');
       orders.set(orderId, { ...order, status: 'cancelled' });
     },
+    async approve({ orderId }) {
+      const order = orders.get(orderId);
+      if (!order) throw new OrderGatewayError('not-found');
+      if (order.status !== 'pending') throw new OrderGatewayError('conflict');
+      orders.set(orderId, { ...order, status: 'approved' });
+    },
   };
 }
