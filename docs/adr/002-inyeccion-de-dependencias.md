@@ -1,8 +1,8 @@
 # ADR-002 · Inyección de dependencias y Composition Root en Pedidos
 
-- **Estado:** propuesto
+- **Estado:** aceptado (versión de referencia del profesor)
 - **Fecha:** 16/11/2026
-- **Autoría:** <tu-nombre>
+- **Autoría:** Joan Cifo
 
 ## Contexto
 - Hasta la Sesión 3, `src/orders/composition.ts` exportaba una instancia global (`orderReader`) y `useOrderSummary(reader = orderReader)` la usaba como parámetro por defecto: una dependencia oculta.
@@ -18,10 +18,21 @@
 | 3. Contenedor IoC (InversifyJS, tsyringe, Awilix) | Resolución automática y ciclos de vida | Decoradores y `reflect-metadata` (InversifyJS, tsyringe) o resolución por nombre (Awilix); más conceptos para el equipo |
 
 ## Decisión
-<!-- Escribe tu decisión y el criterio que la justifica. -->
+Opción 2: **inyección manual** (*Pure DI*, Seemann y van Deursen, 2019).
+- Casos de uso como **factories** que reciben sus puertos: `createCancelOrder({ orders, clock, events })`.
+- **Composition Root** en dos piezas: `src/orders/composition.ts` (qué adapters existen y cómo se conectan) y `src/main.tsx` (cuáles se usan en la aplicación). Los tests componen con `createInMemoryAdapters`.
+- React recibe **un único módulo tipado** (`OrdersModule`) por `OrdersProvider`. Ofrece casos de uso, no adapters ni un `get('nombre')`.
+
+Criterio: con 4 puertos y 3 casos de uso, el cableado ocupa unas 30 líneas legibles y el compilador comprueba cada dependencia. Un contenedor añadiría configuración y conceptos sin quitar trabajo.
 
 ## Consecuencias
-<!-- Qué ganamos, qué aceptamos, qué controles lo protegen (comandos) y cuándo revisaríamos la decisión. -->
+- Positivas: casos de uso probados sin `vi.mock`; el grafo completo se lee en un archivo; cambiar de backend o de proveedor de analítica toca un adapter y una línea de composición.
+- Aceptadas: cada caso de uso nuevo añade una línea a `createOrdersModule`; las pantallas heredadas necesitan el Provider (también en sus tests).
+- Controles: `npm run lint:arch` (capas y reloj), `npm run test:contract` (fakes fieles), `useOrdersModule()` falla en voz alta sin Provider.
+- Revisaremos la decisión si: hay más de cinco features con grafos profundos, aparecen ciclos de vida por petición (BFF de la Sesión 6) o el cableado manual supera un archivo legible.
 
 ## Lo que decidimos NO hacer
-<!-- p. ej. contenedor IoC, Service Locator, un Provider por adapter… y por qué. -->
+- **Contenedor IoC**: InversifyJS y tsyringe necesitan decoradores (`experimentalDecorators`, `emitDecoratorMetadata`) y `reflect-metadata`; Awilix resuelve por nombre en tiempo de ejecución. Ninguno compensa con este tamaño.
+- **Service Locator** (`useService('orderGateway')`): oculta las dependencias en la firma y convierte un error de cableado en un fallo en tiempo de ejecución.
+- **Un Provider por adapter**: las pantallas acabarían conociendo la infraestructura.
+- **Instancias globales con parámetros por defecto**: comodidad que se paga con tests que hablan con la red sin avisar.

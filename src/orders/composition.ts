@@ -1,7 +1,7 @@
 // COMPOSICIÓN · Único lugar donde se eligen implementaciones concretas y se conectan con los casos de uso.
 // Sesión 4: ya no exporta instancias globales (singletons). Exporta FÁBRICAS: quien arranca la aplicación
 // (src/main.tsx) o un test decide qué adapters usar y crea el módulo una vez.
-import type { CancelOrder } from './application/cancel-order';
+import { createCancelOrder, type CancelOrder } from './application/cancel-order';
 import { listUrgentOrders, type UrgentOrder } from './application/list-urgent-orders';
 import { loadOrderSummary, type OrderSummary } from './application/load-order-summary';
 import type { Clock, EventPublisher, OrderGateway, OrderReader } from './application/ports';
@@ -28,11 +28,7 @@ export function createOrdersModule({ reader, gateway, clock, events }: OrdersAda
   return {
     loadOrderSummary: () => loadOrderSummary(reader),
     listUrgentOrders: () => listUrgentOrders(reader),
-    // Ejercicio S4 · Parte C · paso 1: conecta el caso de uso con createCancelOrder y los adapters recibidos.
-    cancelOrder: async () => {
-      void [gateway, clock, events];
-      throw new Error('Por implementar (ejercicio S4 · Parte C · composition.ts)');
-    },
+    cancelOrder: createCancelOrder({ orders: gateway, clock, events }),
   };
 }
 

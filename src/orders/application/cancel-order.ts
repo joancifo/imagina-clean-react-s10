@@ -17,16 +17,34 @@ export type CancelOrderDeps = { orders: OrderGateway; clock: Clock; events: Even
 
 export type CancelOrder = (command: CancelOrderCommand) => Promise<Result<Order, CancelOrderError>>;
 
-// Ejercicio S4 · Parte A. Requisitos en cancel-order.test.ts:
-// 1 · motivo no válido → error SIN llamar a ningún puerto
-// 2 · findById → null = 'not-found'
-// 3 · decidir con el dominio (decideCancellation) y la hora de clock
-// 4 · orders.cancel(…)   5 · events.publish(evento) — si falla, el resultado sigue siendo ok
-// OrderGatewayError → err(error.failure) · cualquier otro error se propaga
 /** Factory: recibe los puertos una vez (Composition Root) y devuelve el caso de uso listo para usar. */
 export function createCancelOrder({ orders, clock, events }: CancelOrderDeps): CancelOrder {
-  void [orders, clock, events, decideCancellation, createCancellationReason, err, ok, OrderGatewayError];
-  return async () => {
-    throw new Error('Por implementar (ejercicio S4 · Parte A)');
+  return async ({ orderId, reason: rawReason, actor }) => {
+    // 1 · Entrada: sin un motivo válido no se toca la red.
+    const reason = createCancellationReason(rawReason);
+    if (!reason.ok) return reason;
+
+    try {
+      // 2 · Cargar el estado actual (el que ve la pantalla puede estar desactualizado).
+      const order = await orders.findById(orderId);
+      if (order === null) return err('not-found');
+
+      // 3 · Decidir: la regla es del dominio. La hora la da el puerto Clock.
+      const decision = decideCancellation(order, actor, reason.value, clock.now());
+      if (!decision.ok) return decision;
+
+      // 4 · Ejecutar en el backend.
+      const { event } = decision.value;
+      await orders.cancel({ orderId, reason: reason.value, cancelledBy: event.cancelledBy });
+
+      // 5 · Notificar. El pedido YA está cancelado: un fallo de analítica no puede deshacerlo ni ocultarlo.
+      await events.publish(event).catch(() => undefined);
+
+      return ok(decision.value.order);
+    } catch (error) {
+      // Solo se traducen los fallos previsibles de infraestructura. Un bug sigue siendo una excepción.
+      if (error instanceof OrderGatewayError) return err(error.failure);
+      throw error;
+    }
   };
 }

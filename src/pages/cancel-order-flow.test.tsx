@@ -53,8 +53,7 @@ beforeEach(() => {
 
 afterEach(() => vi.restoreAllMocks());
 
-// Parte C · paso 4: quita .skip
-describe.skip('Parte C · cancelar desde la lista usa el caso de uso', () => {
+describe('Parte C · cancelar desde la lista usa el caso de uso', () => {
   it('cancela en el backend, publica OrderCancelled, marca la fila y avisa; doAction ya no se usa', async () => {
     const adapters = renderOrders(HOTEL_BRISA);
     const row = await confirmCancellation('Cliente duplicado en el ERP');

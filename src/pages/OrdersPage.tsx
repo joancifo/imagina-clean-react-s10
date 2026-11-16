@@ -4,10 +4,9 @@ import { sortBy } from 'lodash';
 import OrderRow from '../components/OrderRow';
 import useOrders from '../hooks/useOrders';
 import { useAppStore } from '../store/appStore';
-import { doAction } from '../services/api';
 import { formatCurrency, trackEvent } from '../shared/utils';
 import type { Order } from '../shared/types';
-import { CANCELLATION_MESSAGES, canCancel, createCancellationReason, toActor, toOrder } from '../orders';
+import { canCancel, toActor, toOrder, useCancelOrder } from '../orders';
 
 export default function OrdersPage() {
   const navigate = useNavigate();
@@ -22,6 +21,7 @@ export default function OrdersPage() {
   const [reasonFor, setReasonFor] = useState<Order | null>(null);
   const [saving, setSaving] = useState(false);
   const [compact, setCompact] = useState(false);
+  const { cancel, pending: cancelling } = useCancelOrder();
 
   // Efecto 1: restaurar filtros guardados.
   useEffect(() => {
@@ -108,21 +108,18 @@ export default function OrdersPage() {
     }
   };
 
+  // Sesión 4: el handler solo traduce. Validar, decidir, cancelar y publicar es trabajo del caso de uso.
   const handleCancel = async () => {
     if (!reasonFor) return;
-    const parsed = createCancellationReason(reason);
-    if (!parsed.ok) {
-      alert(CANCELLATION_MESSAGES[parsed.error]);
+    const outcome = await cancel({ orderId: reasonFor.ord_id, reason, actor });
+    if (!outcome.ok) {
+      alert(outcome.message);
       return;
     }
-    setSaving(true);
-    const updated = await doAction(reasonFor.ord_id, 'cancel');
-    updateOrder(updated, reasonFor.total);
-    trackEvent('order_cancelled', { id: reasonFor.ord_id, reason: parsed.value });
+    updateOrder({ ...reasonFor, ord_st: 'cancelled' }, reasonFor.total);
     setToast('Pedido cancelado');
     setReasonFor(null);
     setReason('');
-    setSaving(false);
   };
 
   if (loading) return <main className="page">Cargando…</main>;
@@ -199,7 +196,7 @@ export default function OrdersPage() {
         <div className="dialog" role="dialog" aria-label="Cancelar pedido">
           <h2>Cancelar {reasonFor.ord_id}</h2>
           <textarea aria-label="Motivo" value={reason} onChange={(e) => setReason(e.target.value)} />
-          <button onClick={handleCancel} disabled={saving}>Confirmar</button>
+          <button onClick={handleCancel} disabled={saving || cancelling}>Confirmar</button>
           <button onClick={() => setReasonFor(null)}>Volver</button>
         </div>
       )}

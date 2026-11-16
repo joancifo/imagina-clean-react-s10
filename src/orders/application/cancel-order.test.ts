@@ -59,8 +59,7 @@ function setup(orders: Order[] = [anOrder('P-1')], options: { failOn?: Partial<R
   return { cancelOrder, ...fake, ...spy };
 }
 
-// Parte A · paso 1: quita .skip en los TRES describe
-describe.skip('cancelar pedido · camino feliz', () => {
+describe('cancelar pedido · camino feliz', () => {
   it('cancela, publica OrderCancelled con la hora del reloj y devuelve el pedido cancelado', async () => {
     const { cancelOrder, cancelled, published } = setup();
     const result = await cancelOrder({ orderId: 'P-1', reason: REASON, actor: admin });
@@ -79,7 +78,7 @@ describe.skip('cancelar pedido · camino feliz', () => {
   });
 });
 
-describe.skip('cancelar pedido · errores previsibles (Result, sin excepciones)', () => {
+describe('cancelar pedido · errores previsibles (Result, sin excepciones)', () => {
   it('ENTRADA · un motivo no válido se rechaza antes de tocar la red', async () => {
     const { cancelOrder, calls } = setup();
     expect(await cancelOrder({ orderId: 'P-1', reason: 'a          b', actor: admin })).toEqual({ ok: false, error: 'too-short' });
@@ -116,7 +115,7 @@ describe.skip('cancelar pedido · errores previsibles (Result, sin excepciones)'
   });
 });
 
-describe.skip('cancelar pedido · decisiones de diseño', () => {
+describe('cancelar pedido · decisiones de diseño', () => {
   it('si la analítica falla, el pedido sigue cancelado: el resultado es ok', async () => {
     const { cancelOrder, cancelled } = setup(undefined, { publishFails: true });
     const result = await cancelOrder({ orderId: 'P-1', reason: REASON, actor: admin });

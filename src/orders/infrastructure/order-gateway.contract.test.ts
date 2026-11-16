@@ -22,4 +22,4 @@ describeOrderGatewayContract('adapter HTTP + server/app.mjs', async () => {
     gateway: createHttpOrderGateway(fetch, `http://127.0.0.1:${port}/api`),
     dispose: () => new Promise<void>((resolve) => server.close(() => resolve())),
   };
-}, { skip: true }); // Parte B · paso 1: quita { skip: true }
+});

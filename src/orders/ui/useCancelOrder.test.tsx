@@ -19,8 +19,7 @@ function renderWith(adapters: OrdersAdapters) {
   return renderHook(() => useCancelOrder(), { wrapper });
 }
 
-// Parte C · paso 3: quita .skip
-describe.skip('useCancelOrder', () => {
+describe('useCancelOrder', () => {
   it('cancela a través del caso de uso: el fake queda cancelado y se publica el evento', async () => {
     const adapters = createInMemoryAdapters([pending], { now: () => new Date('2026-11-16T18:00:00Z') });
     const { result } = renderWith(adapters);

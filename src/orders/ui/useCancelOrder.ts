@@ -8,17 +8,25 @@ import { useOrdersModule } from './OrdersProvider';
 
 export type CancelOutcome = { ok: true } | { ok: false; message: string };
 
-// Ejercicio S4 · Parte C · paso 3. Especificación: useCancelOrder.test.tsx
-// - El caso de uso sale de useOrdersModule().
-// - pending: true mientras el caso de uso trabaja.
-// - Result ok → { ok: true } · Result error → { ok: false, message: CANCELLATION_MESSAGES[código] }
-// - Excepción (bug) → { ok: false, message: UNEXPECTED_ERROR }, sin romper la pantalla.
-export function useCancelOrder(): { cancel: (command: CancelOrderCommand) => Promise<CancelOutcome>; pending: boolean } {
-  void [useCallback, useState, useOrdersModule, CANCELLATION_MESSAGES, UNEXPECTED_ERROR];
-  return {
-    cancel: async () => {
-      throw new Error('Por implementar (ejercicio S4 · Parte C · useCancelOrder)');
+export function useCancelOrder() {
+  const { cancelOrder } = useOrdersModule();
+  const [pending, setPending] = useState(false);
+
+  const cancel = useCallback(
+    async (command: CancelOrderCommand): Promise<CancelOutcome> => {
+      setPending(true);
+      try {
+        const result = await cancelOrder(command);
+        return result.ok ? { ok: true } : { ok: false, message: CANCELLATION_MESSAGES[result.error] };
+      } catch {
+        // Un bug: la pantalla sigue viva. Registrarlo con un puerto Logger es la Sesión 7 (observabilidad).
+        return { ok: false, message: UNEXPECTED_ERROR };
+      } finally {
+        setPending(false);
+      }
     },
-    pending: false,
-  };
+    [cancelOrder],
+  );
+
+  return { cancel, pending };
 }

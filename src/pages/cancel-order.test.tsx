@@ -70,7 +70,8 @@ describe('Parte A · el motivo se valida con el value object', () => {
     fireEvent.click(within(row).getByRole('button', { name: 'Cancelar' }));
     fireEvent.change(screen.getByLabelText('Motivo'), { target: { value: 'a          b' } });
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar' }));
-    expect(alert).toHaveBeenCalledWith('El motivo debe tener al menos 10 caracteres');
+    // Sesión 4: la validación ahora pasa por el caso de uso, que es asíncrono → se espera el aviso.
+    await waitFor(() => expect(alert).toHaveBeenCalledWith('El motivo debe tener al menos 10 caracteres'));
     expect(api.doAction).not.toHaveBeenCalled();
   });
 });

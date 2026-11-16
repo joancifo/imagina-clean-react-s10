@@ -16,8 +16,7 @@ async function failureOf(promise: Promise<unknown>) {
   }
 }
 
-// Parte B · paso 1: quita .skip
-describe.skip('adapter HTTP · casos que el contrato no cubre', () => {
+describe('adapter HTTP · casos que el contrato no cubre', () => {
   it('red caída (fetch rechaza con TypeError) → unavailable, en las dos operaciones', async () => {
     const offline = (async () => { throw new TypeError('Failed to fetch'); }) as unknown as typeof fetch;
     const gateway = createHttpOrderGateway(offline);
