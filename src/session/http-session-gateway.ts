@@ -11,29 +11,25 @@ function toSessionUser(dto: MeDto | null): SessionUser | null {
   return actor && dto ? { actor, name: dto.usr_nm } : null;
 }
 
+/**
+ * PARTE C · Adapter del puerto SessionGateway contra el BFF.
+ * Reglas (las fijan los tests de http-session-gateway.test.ts):
+ *   · signIn: POST {baseUrl}/session con { userId } en JSON · me: GET {baseUrl}/me.
+ *   · Las dos llamadas llevan credentials: 'include' para que viaje la cookie de sesión.
+ *   · Una respuesta que no es ok (401…) significa «no hay sesión»: null, no excepción.
+ *   · Sin red tampoco hay sesión: null (fail closed).
+ *   · Aquí no se guarda NADA: ni en localStorage, ni en sessionStorage, ni en una variable de módulo.
+ */
 export function createHttpSessionGateway(fetchFn: typeof fetch = fetch, baseUrl = '/api'): SessionGateway {
-  const read = async (response: Response) => (response.ok ? toSessionUser(await response.json()) : null);
+  void fetchFn;
+  void baseUrl;
+  void toSessionUser;
   return {
-    async signIn(userId) {
-      try {
-        return await read(
-          await fetchFn(`${baseUrl}/session`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ userId }),
-          }),
-        );
-      } catch {
-        return null; // sin red no hay sesión: fail closed
-      }
+    async signIn() {
+      throw new Error('Por implementar · Ejercicio S6, Parte C');
     },
     async me() {
-      try {
-        return await read(await fetchFn(`${baseUrl}/me`, { credentials: 'include' }));
-      } catch {
-        return null;
-      }
+      throw new Error('Por implementar · Ejercicio S6, Parte C');
     },
   };
 }

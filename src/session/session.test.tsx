@@ -17,31 +17,34 @@ function Pantalla() {
 
 const renderWith = (gateway: SessionGateway) => render(<SessionProvider gateway={gateway}><Pantalla /></SessionProvider>);
 
-it('mientras el servidor no contesta, la sesión está «cargando»: no es «sin permiso»', () => {
-  renderWith({ signIn: async () => null, me: () => new Promise(() => {}) });
-  expect(screen.getByText('Cargando…')).toBeInTheDocument();
-});
+describe.skip('Parte C · la sesión la decide el servidor', () => {
+  it('mientras el servidor no contesta, la sesión está «cargando»: no es «sin permiso»', () => {
+    renderWith({ signIn: async () => null, me: () => new Promise(() => {}) });
+    expect(screen.getByText('Cargando…')).toBeInTheDocument();
+  });
 
-it('recupera la sesión que ya existe en el servidor', async () => {
-  renderWith(createInMemorySessionGateway({ id: 'u2', role: 'manager' }));
-  expect(await screen.findByText('manager:u2')).toBeInTheDocument();
-});
+  it('recupera la sesión que ya existe en el servidor', async () => {
+    renderWith(createInMemorySessionGateway({ id: 'u2', role: 'manager' }));
+    expect(await screen.findByText('manager:u2')).toBeInTheDocument();
+  });
 
-it('sin sesión en el servidor, la respuesta es «sin sesión» (fail closed)', async () => {
-  renderWith(createInMemorySessionGateway(null));
-  expect(await screen.findByText('sin sesión')).toBeInTheDocument();
-});
+  it('sin sesión en el servidor, la respuesta es «sin sesión» (fail closed)', async () => {
+    renderWith(createInMemorySessionGateway(null));
+    expect(await screen.findByText('sin sesión')).toBeInTheDocument();
+  });
 
-it('al entrar, el actor lo dice el servidor', async () => {
-  renderWith(createInMemorySessionGateway(null));
-  await screen.findByText('sin sesión');
-  fireEvent.click(screen.getByRole('button', { name: 'Entrar como admin' }));
-  expect(await screen.findByText('admin:u1')).toBeInTheDocument();
-});
+  it('al entrar, el actor lo dice el servidor', async () => {
+    renderWith(createInMemorySessionGateway(null));
+    await screen.findByText('sin sesión');
+    fireEvent.click(screen.getByRole('button', { name: 'Entrar como admin' }));
+    expect(await screen.findByText('admin:u1')).toBeInTheDocument();
+  });
 
-it('el navegador no guarda nada: ni token, ni rol, ni identificador', async () => {
-  renderWith(createInMemorySessionGateway({ id: 'u1', role: 'admin' }));
-  await screen.findByText('admin:u1');
-  expect(localStorage.length).toBe(0);
-  expect(document.cookie).toBe(''); // la cookie de sesión es HttpOnly: ni siquiera se ve desde aquí
+  it('el navegador no guarda nada: ni token, ni rol, ni identificador', async () => {
+    renderWith(createInMemorySessionGateway({ id: 'u1', role: 'admin' }));
+    await screen.findByText('admin:u1');
+    expect(localStorage.length).toBe(0);
+    expect(document.cookie).toBe(''); // la cookie de sesión es HttpOnly: ni siquiera se ve desde aquí
+  });
+
 });

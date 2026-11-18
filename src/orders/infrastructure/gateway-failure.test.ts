@@ -2,7 +2,7 @@
 // Ejercicio S6 · Parte B · El adapter de errores: una tabla, no una escalera de if.
 import { failureFor } from './gateway-failure';
 
-describe('failureFor', () => {
+describe.skip('failureFor', () => {
   it('manda el código del cuerpo cuando el BFF lo envía', () => {
     expect(failureFor(403, { error: { code: 'forbidden' } })).toBe('forbidden');
     expect(failureFor(409, { error: { code: 'conflict' } })).toBe('conflict');

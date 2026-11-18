@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { sendLog } from '../services/api';
+import { ANALYTICS_KEY } from './config';
 import type { Order } from './types';
 
 export function formatCurrency(value: number): string {
@@ -20,10 +21,7 @@ export function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Error desconocido';
 }
 
-// Sesión 6 · La analítica solo acepta campos previstos (el BFF rechaza el resto con 422).
-// Ni nombres de cliente, ni motivos escritos a mano, ni el identificador guardado en el navegador.
-export type AnalyticsPayload = { id?: string; by?: string; code?: string; total?: number; at?: string };
-
-export function trackEvent(name: string, payload: AnalyticsPayload) {
-  return sendLog({ level: 'info', name, payload });
+export function trackEvent(name: string, payload: object) {
+  console.info('[analytics]', name, payload);
+  sendLog({ level: 'info', name, payload, user: localStorage.getItem('userId'), key: ANALYTICS_KEY });
 }

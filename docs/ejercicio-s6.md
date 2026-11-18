@@ -6,8 +6,8 @@
 ```bash
 git checkout -b s6/<tu-nombre>
 npm install
-npm test            # 310 tests en verde y 56 omitidos (skipped): 8 bloques que activarás tú
-npm run audit:secrets   # 4 hallazgos en src/. Ese es el punto de partida.
+npm test                # 312 tests en verde y 61 omitidos (skipped): 8 bloques que activarás tú
+npm run audit:secrets   # 10 hallazgos en 6 archivos. Ese es el punto de partida.
 ```
 
 ## Contexto
@@ -66,8 +66,9 @@ Tests: `http-session-gateway.test.ts` (6), `session.test.tsx` (5) y `security.te
 
 1. Quita `.skip` en los tres archivos de test.
 2. Implementa `createHttpSessionGateway`: `signIn` y `me` contra el BFF, con la cookie (`credentials: 'include'`), sin guardar nada y devolviendo `null` cuando no hay sesión (fail closed).
-3. Arregla los cuatro hallazgos de `npm run audit:secrets`. Para cada uno, decide **dónde** va la solución:
-   la clave de analítica, la identidad en `x-user-id`, el identificador en `localStorage` y la nota pintada como HTML.
+3. Arregla los **10 hallazgos** de `npm run audit:secrets` (6 archivos). Para cada uno, decide **dónde** va la solución:
+   la clave de analítica del bundle, la identidad en `x-user-id` (cliente heredado y adapter), el identificador en `localStorage` y la nota pintada como HTML.
+   Al migrar la sesión: `src/shell/session.ts` y `src/hooks/useCurrentUser.ts` desaparecen; el store global se queda solo con el aviso.
 4. Cambia `src/main.tsx` para componer también la sesión, y retira lo que ya no use nadie (`npm run unused`).
 5. Comprobación final:
    ```bash
@@ -89,5 +90,5 @@ Abre el Pull Request y completa la checklist de la plantilla (incluye el bloque 
 - Con la aplicación arrancada, entra como Iris y ejecuta en la consola: `await fetch('/api/orders/P-1001/approve', { method: 'POST', credentials: 'include', headers: { 'x-user-id': 'u1' } })`. ¿Qué responde? ¿Y antes de hoy?
 - El BFF acepta cualquier cuerpo en `/api/orders/:id/approve`. Añade la nota de justificación al contrato: valida, guárdala y **no** la devuelvas en el listado.
 - Una sesión caduca en 60 minutos (`shared/policy.json`). ¿Qué ve la persona usuaria cuando caduca mientras trabaja? Escribe el test y decide el comportamiento.
-- Con el prompt P3 de `prompts/sesion-6.md`, pide a Copilot una revisión de seguridad del diff y comprueba cuántos de los cuatro hallazgos habría encontrado solo.
+- Con el prompt P3 de `prompts/sesion-6.md`, pide a Copilot una revisión de seguridad del diff y comprueba cuántos de los diez hallazgos habría encontrado solo.
 - Hito del proyecto final: completa `docs/adr/004-bff-sesion-y-seguridad.md` y la tabla «Mi mapa de confianza» de `docs/arquitectura-objetivo.md`.

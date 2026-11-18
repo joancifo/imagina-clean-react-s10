@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { getOrders } from '../services/api';
 import { formatCurrency } from '../shared/utils';
-import { useSession } from '../session';
+import useCurrentUser from '../hooks/useCurrentUser';
 import type { Order } from '../shared/types';
-import { canCancel, toOrder } from '../orders';
+import { canCancel, toActor, toOrder } from '../orders';
 
 export default function DashboardPage() {
-  const session = useSession();
+  const user = useCurrentUser();
   const [orders, setOrders] = useState<Order[]>([]);
   useEffect(() => {
     getOrders().then(setOrders);
@@ -22,7 +22,7 @@ export default function DashboardPage() {
   const pending = rows.filter((r) => r.status === 'pending');
   const revenue = rows.filter((r) => r.status === 'shipped' || r.status === 'approved').reduce((a, r) => a + r.total, 0);
   // Regla oficial de cancelación (dominio), sobre el pedido completo y no sobre la fila resumida.
-  const actor = session.status === 'ready' ? session.actor : null;
+  const actor = toActor(user);
   const cancellable = orders.filter((o) => canCancel(toOrder(o), actor));
 
   return (

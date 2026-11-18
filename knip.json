@@ -1,1 +1,17 @@
-{ "entry": ["scripts/*.mjs", "examples/**/*.test.{ts,tsx}", "src/**/*.test.{ts,tsx}"], "project": ["src/**/*.{ts,tsx}", "server/**/*.mjs", "scripts/*.mjs", "examples/**/*.{ts,tsx}"] }
+{
+  "entry": [
+    "scripts/*.mjs",
+    "examples/**/*.test.{ts,tsx}",
+    "src/**/*.test.{ts,tsx}"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "server/**/*.mjs",
+    "scripts/*.mjs",
+    "examples/**/*.{ts,tsx}"
+  ],
+  "ignore": [
+    "examples/tema13/inseguro/**",
+    "examples/tema5/approve-order/**"
+  ]
+}

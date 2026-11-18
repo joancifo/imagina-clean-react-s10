@@ -7,6 +7,7 @@ export type Order = {
   owner_id: string;
   crt_ts: string;
   ln_items: { sku: string; qty: number; unit_prc: number }[];
+  cust_note?: string;
 };
 
 export type User = { usr_id: string; usr_nm: string; usr_role: string };

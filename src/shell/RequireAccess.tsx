@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import type { Actor } from '../orders';
 import { ForbiddenPage } from './ForbiddenPage';
-import type { Session } from '../session';
+import type { Session } from './session';
 
 type Props = { session: Session; can: (actor: Actor | null) => boolean; children: (actor: Actor) => ReactNode };
 

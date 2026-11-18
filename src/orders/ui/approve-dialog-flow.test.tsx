@@ -45,7 +45,7 @@ const clickApprove = async (id: string) => {
 };
 const dialog = () => screen.findByRole('dialog', { name: 'Aprobar pedido' });
 
-describe('Parte B · cuándo aparece el diálogo', () => {
+describe.skip('Parte B · cuándo aparece el diálogo', () => {
   it('un pedido corriente se aprueba de un clic: la pantalla no inventa ceremonia', async () => {
     const { onNotify } = renderList(createInMemoryAdapters([CORRIENTE]));
     await clickApprove('P-1');
@@ -63,7 +63,7 @@ describe('Parte B · cuándo aparece el diálogo', () => {
   });
 });
 
-describe('Parte B · el formulario corrige antes de llamar a nadie', () => {
+describe.skip('Parte B · el formulario corrige antes de llamar a nadie', () => {
   it('confirmar en vacío enseña los DOS errores y no cierra el diálogo', async () => {
     const adapters = createInMemoryAdapters([URGENTE]);
     renderList(adapters);
@@ -101,7 +101,7 @@ describe('Parte B · el formulario corrige antes de llamar a nadie', () => {
   });
 });
 
-describe('Parte B · errores del servidor', () => {
+describe.skip('Parte B · errores del servidor', () => {
   it('«no hay servidor» se puede reintentar', async () => {
     renderList(failingWith('unavailable', createInMemoryAdapters([CORRIENTE])));
     await clickApprove('P-1');

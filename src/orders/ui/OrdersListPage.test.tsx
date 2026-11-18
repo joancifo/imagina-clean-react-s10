@@ -144,7 +144,8 @@ describe('Parte C · la lista nueva, de extremo a extremo', () => {
     });
 
     // Sesión 6 · P-3 es urgente (6050 €): ya no se aprueba de un clic, hay que justificar.
-    it('un pedido urgente: se justifica en el diálogo y después navega a su detalle', async () => {
+    // Parte B · quita el .skip cuando el diálogo de aprobación esté conectado.
+    it.skip('un pedido urgente: se justifica en el diálogo y después navega a su detalle', async () => {
       renderList({ actor: ADMIN });
       fireEvent.click(within(await rowOf('P-3')).getByRole('button', { name: 'Aprobar' }));
       const dialog = await screen.findByRole('dialog', { name: 'Aprobar pedido' });

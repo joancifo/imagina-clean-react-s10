@@ -6,7 +6,7 @@ import DashboardPage from '../pages/DashboardPage';
 import OrderDetailPage from '../pages/OrderDetailPage';
 import { NotFoundPage } from './NotFoundPage';
 import { RequireAccess } from './RequireAccess';
-import type { Session } from '../session';
+import type { Session } from './session';
 
 type Props = { session: Session; onNotify: (message: string) => void };
 

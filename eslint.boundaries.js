@@ -3,8 +3,7 @@
 // Documentación: https://eslint.org/docs/latest/rules/no-restricted-imports
 import tseslint from 'typescript-eslint';
 
-// Sesión 6 · src/session es código nuevo, pero también usa Pedidos desde fuera: misma regla.
-const LEGACY = ['pages', 'components', 'store', 'shared', 'services', 'shell', 'session'].map((dir) => `src/${dir}/**/*.{ts,tsx}`);
+const LEGACY = ['pages', 'components', 'hooks', 'store', 'shared', 'services', 'shell'].map((dir) => `src/${dir}/**/*.{ts,tsx}`);
 
 export default tseslint.config(
   // El plugin se registra para que los comentarios «eslint-disable» del heredado se reconozcan.
