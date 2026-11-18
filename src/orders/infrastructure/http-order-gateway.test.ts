@@ -29,13 +29,25 @@ describe('adapter HTTP · casos que el contrato no cubre', () => {
     expect(await failureOf(createHttpOrderGateway(respond(503)).cancel({ orderId: 'P-1', reason: REASON, cancelledBy: 'u1' }))).toBe('unavailable');
   });
 
-  it('envía POST /orders/:id/cancel con el motivo en JSON y el actor en x-user-id', async () => {
+  // Sesión 6 · La identidad dejó de viajar en una cabecera que escribe el cliente.
+  it('envía POST /orders/:id/cancel con el motivo en JSON, con la cookie y SIN x-user-id', async () => {
     const fetchFn = respond(200);
     await createHttpOrderGateway(fetchFn, '/api').cancel({ orderId: 'P-1005', reason: REASON, cancelledBy: 'u2' });
     const [url, init] = vi.mocked(fetchFn).mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe('/api/orders/P-1005/cancel');
     expect(init.method).toBe('POST');
-    expect(new Headers(init.headers).get('x-user-id')).toBe('u2');
+    expect(init.credentials).toBe('include');
+    expect(new Headers(init.headers).get('x-user-id')).toBe(null);
     expect(JSON.parse(String(init.body))).toEqual({ reason: 'Cliente duplicado en el ERP' });
+  });
+
+  it('un 403 del BFF es un fallo previsible del puerto, no una excepción suelta', async () => {
+    const gateway = createHttpOrderGateway(respond(403, { error: { code: 'forbidden' } }));
+    expect(await failureOf(gateway.approve({ orderId: 'P-1005', approvedBy: 'u3' }))).toBe('forbidden');
+  });
+
+  it('un 422 con el cuerpo rechazado llega como invalid', async () => {
+    const gateway = createHttpOrderGateway(respond(422, { error: { code: 'invalid-body' } }));
+    expect(await failureOf(gateway.cancel({ orderId: 'P-1005', reason: REASON, cancelledBy: 'u1' }))).toBe('invalid');
   });
 });

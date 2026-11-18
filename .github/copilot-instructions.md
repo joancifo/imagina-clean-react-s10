@@ -32,3 +32,13 @@ Este repositorio es material de formación con code smells intencionados en el c
 - Los permisos de acceso son reglas de `domain/permissions.ts`; las rutas las aplican con `RequireAccess` (`src/shell`).
 - No añadas librerías de estado o de caché sin un ADR. `examples/tema10/server-state.tsx` muestra el patrón aceptado si se adopta TanStack Query.
 - Comprueba con `npm run lint:arch`, `npm run state` y los tests de `src/shell/AppRoutes.test.tsx`.
+
+## Sesión 6 · Node, errores y seguridad
+- La identidad la decide el servidor. No generes código que envíe `x-user-id`, lea el rol de `localStorage` o acepte el actor como parámetro de una petición.
+- No guardes tokens ni sesiones en `localStorage` ni en `sessionStorage`: la sesión va en una cookie `HttpOnly` que pone el BFF (`credentials: 'include'` en el cliente).
+- Nada que empiece por `VITE_` puede contener un secreto: viaja en el bundle. Los secretos se leen en Node desde `process.env`.
+- Los datos que llegan de fuera se parsean (lista blanca de campos y de valores) antes de llegar al dominio. No uses `as` sobre datos externos.
+- Los errores del BFF son `{ error: { code } }`: ni rutas, ni stack, ni mensajes del backend. En el cliente se traducen con una tabla (`gateway-failure.ts`) y se muestran con los mensajes de `ui/*-messages.ts`.
+- A la analítica solo viajan `id`, `by`, `code`, `total` y `at`. Nunca nombres de cliente, motivos ni notas escritas a mano.
+- Los umbrales de negocio viven en `shared/policy.json` y los usan el dominio y el BFF. Si cambias uno, el test `src/orders/policy.contract.test.ts` debe seguir en verde.
+- No uses `dangerouslySetInnerHTML`. Si hace falta un enlace externo, valida el protocolo (`examples/tema13/external-data.ts`).

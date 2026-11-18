@@ -10,7 +10,7 @@
 | 3 | 12 nov | Decisión de estructura (capas, feature o slice) y reglas de negocio en módulos puros |
 | 4 | 16 nov | Casos de uso, puertos, adapters, fakes y Composition Root |
 | 5 | 18 nov | Hooks adaptadores, view models o presenters, estado y routing |
-| 6 | 19 nov | Rol de Node (BFF si aporta), formularios, errores y seguridad |
+| 6 | 19 nov | Rol de Node (BFF si aporta), formularios, errores y seguridad · ADR-004 y mapa de confianza |
 | 7 | 23 nov | Medición de rendimiento, refactor incremental y estrategia de testing |
 | 8 | 25 nov | Tests unitarios, de componentes y de integración |
 | 9 | 26 nov | E2E crítico, mejoras de CI/CD y ADR |

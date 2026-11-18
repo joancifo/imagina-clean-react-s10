@@ -9,7 +9,8 @@ function toLog(event: DomainEvent): { name: string; payload: Record<string, unkn
     case 'OrderCancelled':
       return { name: 'order_cancelled', payload: { id: event.orderId, by: event.cancelledBy, reason: event.reason, at: event.occurredAt } };
     case 'OrderApproved':
-      return { name: 'order_approved', payload: { id: event.orderId, by: event.approvedBy, total: event.total, at: event.occurredAt } };
+      // Sesión 6 · Se publica el CANAL y si hubo nota; nunca el texto de la nota ni el nombre del cliente.
+      return { name: 'order_approved', payload: { id: event.orderId, by: event.approvedBy, total: event.total, code: event.channel, at: event.occurredAt } };
   }
 }
 

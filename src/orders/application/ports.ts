@@ -19,8 +19,10 @@ export class OrderReadError extends Error {
 }
 
 // ── Escritura de pedidos (Sesión 4) ───────────────────────────────────────────────
-/** Fallos de infraestructura que el caso de uso SÍ sabe tratar. Códigos estables, sin HTTP. */
-export type GatewayFailure = 'not-found' | 'conflict' | 'unavailable';
+/** Fallos de infraestructura que el caso de uso SÍ sabe tratar. Códigos estables, sin HTTP.
+ *  Sesión 6: el BFF autoriza de verdad, así que puede responder «no puedes» ('forbidden')
+ *  o «eso que me mandas no vale» ('invalid'). Son respuestas previsibles, no excepciones. */
+export type GatewayFailure = 'not-found' | 'conflict' | 'unavailable' | 'forbidden' | 'invalid';
 
 /** El adapter traduce cualquier fallo previsible (404, 409, 5xx, red caída…) a este error. */
 export class OrderGatewayError extends Error {

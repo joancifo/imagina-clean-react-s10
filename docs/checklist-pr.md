@@ -41,4 +41,17 @@ Cada pregunta se responde con evidencia (`ruta:línea`, salida de un comando o u
 | ¿La URL reproduce lo que se ve? | Recargar pierde filtros o paginación | Abrir el enlace en otra pestaña |
 | ¿Los permisos de acceso están en un sitio? | `if (user.role …) return null` dentro de la pantalla | Guard + regla del dominio; test del mapa de rutas |
 
-Fuentes: R. C. Martin, *Clean Architecture* (2017), caps. 7–11; E. Evans, *Domain-Driven Design* (2003); V. Vernon, *Implementing Domain-Driven Design* (2013); documentación de ESLint (`no-restricted-imports`, `no-restricted-globals`); TypeScript 4.9 (`satisfies`); A. Cockburn, *Hexagonal Architecture* (2005); M. Seemann y S. van Deursen, *Dependency Injection Principles, Practices, and Patterns* (2019); G. Meszaros, *xUnit Test Patterns* (2007); react.dev («You Might Not Need an Effect», «Choosing the State Structure», «Reusing Logic with Custom Hooks»); documentación de React Router (`useSearchParams`) y de TanStack Query.
+## Node, errores y seguridad (Sesión 6)
+| Pregunta | Señal de alarma | Comprobación |
+|---|---|---|
+| ¿Quién decide la identidad? | Una cabecera, un parámetro o `localStorage` que escribe el cliente | `npm run audit:secrets`; test del BFF con cookie manipulada |
+| ¿La autorización se comprueba en el servidor? | Solo se oculta el botón | Test que llama al endpoint sin pasar por la interfaz |
+| ¿Sale del servidor algo que no se puede ver? | Importes en la respuesta y ocultos en la pantalla | Pestaña Red del navegador; test de recorte por rol |
+| ¿La entrada se comprueba antes de usarse? | `as` sobre datos externos; campos de más ignorados | Parseo con lista blanca; 422 en el BFF |
+| ¿Los errores dicen lo justo? | Rutas, SQL, stack o el texto del servidor en pantalla | Cuerpo `{ error: { code } }`; mensajes por tabla |
+| ¿Qué se reintenta? | Un botón «Reintentar» tras un 403 | `retryable` solo para fallos de red o conflicto |
+| ¿Qué viaja a la analítica? | Nombres, motivos o notas escritas a mano | Lista blanca de campos; 422 del BFF |
+| ¿Hay secretos en el bundle? | `VITE_…KEY`, credenciales escritas a mano | `npm run audit:secrets`; `src/security.test.ts` |
+| ¿Las reglas duplicadas están de acuerdo? | Un umbral copiado en Node y en el dominio | `shared/policy.json` + `npm run test:policy` |
+
+Fuentes: R. C. Martin, *Clean Architecture* (2017), caps. 7–11; E. Evans, *Domain-Driven Design* (2003); V. Vernon, *Implementing Domain-Driven Design* (2013); documentación de ESLint (`no-restricted-imports`, `no-restricted-globals`); TypeScript 4.9 (`satisfies`); A. Cockburn, *Hexagonal Architecture* (2005); M. Seemann y S. van Deursen, *Dependency Injection Principles, Practices, and Patterns* (2019); G. Meszaros, *xUnit Test Patterns* (2007); react.dev («You Might Not Need an Effect», «Choosing the State Structure», «Reusing Logic with Custom Hooks»); documentación de React Router (`useSearchParams`) y de TanStack Query; OWASP Top Ten (2021) y OWASP Cheat Sheet Series (Cross-Site Scripting Prevention, Session Management); MDN (`Set-Cookie`, `SameSite`, `credentials`); documentación de Node.js (`node:crypto`) y de Vite (variables de entorno `VITE_`).

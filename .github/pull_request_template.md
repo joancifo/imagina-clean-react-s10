@@ -29,4 +29,14 @@
 - [ ] El acceso a la pantalla lo decide un guard con una regla del dominio, no la propia pantalla.
 - [ ] Tests heredados borrados: indico qué test nuevo protege ese comportamiento.
 
+## Node, errores y seguridad (Sesión 6)
+- [ ] La identidad la decide el servidor: ninguna cabecera, parámetro ni valor de `localStorage` elegido por el cliente.
+- [ ] Cada acción con permisos se comprueba también en el BFF, no solo en la pantalla.
+- [ ] Lo que la persona usuaria no puede ver no sale del servidor (lo he mirado en la pestaña Red).
+- [ ] Los datos que llegan de fuera (URL, formulario, respuesta, almacenamiento) se parsean antes de usarse.
+- [ ] Los errores devuelven un código estable; ni rutas, ni stack, ni el texto del servidor en pantalla.
+- [ ] Solo se ofrece reintentar lo que puede salir distinto (red o conflicto).
+- [ ] A la analítica solo viajan campos de la lista blanca: ningún nombre, motivo ni nota.
+- [ ] `npm run audit:secrets` no encuentra nada y `npm run test:policy` está en verde.
+
 ## Cómo lo he comprobado

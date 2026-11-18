@@ -1,6 +1,7 @@
 // DOMINIO · Regla oficial de cancelación y transición del pedido.
 // Sustituye a las TRES versiones contradictorias del código heredado:
 //   src/pages/OrdersPage.tsx (canCancelOrder) · src/pages/OrderDetailPage.tsx (canCancel) · src/pages/DashboardPage.tsx (cancellable)
+import policy from '../../../shared/policy.json';
 import type { CancellationReason } from './cancellation-reason';
 import { calculateTotal, type Order } from './order';
 import { err, ok, type Result } from './result';
@@ -9,7 +10,7 @@ export type Role = 'admin' | 'manager' | 'agent';
 export type Actor = { id: string; role: Role };
 
 /** Un manager solo cancela pedidos pendientes por debajo de este total (con descuento e IVA). */
-export const MANAGER_CANCEL_LIMIT = 5000;
+export const MANAGER_CANCEL_LIMIT = policy.cancellation.managerLimit;
 
 export type CancellationDenied = 'no-session' | 'already-closed' | 'forbidden' | 'over-manager-limit';
 

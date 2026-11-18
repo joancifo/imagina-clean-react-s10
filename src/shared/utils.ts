@@ -20,7 +20,10 @@ export function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Error desconocido';
 }
 
-export function trackEvent(name: string, payload: object) {
-  console.info('[analytics]', name, payload);
-  sendLog({ level: 'info', name, payload, user: localStorage.getItem('userId') });
+// Sesión 6 · La analítica solo acepta campos previstos (el BFF rechaza el resto con 422).
+// Ni nombres de cliente, ni motivos escritos a mano, ni el identificador guardado en el navegador.
+export type AnalyticsPayload = { id?: string; by?: string; code?: string; total?: number; at?: string };
+
+export function trackEvent(name: string, payload: AnalyticsPayload) {
+  return sendLog({ level: 'info', name, payload });
 }

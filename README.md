@@ -43,6 +43,13 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 | `npm run demo:tema10` | Estado derivado, máquina de estados, URL como fuente de verdad y caché de servidor |
 | `npm run state` | Mapa de `useState`, `useEffect`, store global, URL y `localStorage` por archivo |
 | `npm run unused` | Archivos que ya no importa nadie (knip) |
+| `npm run demo:tema11` | Node: endpoint de BFF, variables de entorno y script de scaffolding |
+| `npm run demo:tema12` | Patrones, errores por origen y reintento |
+| `npm run demo:tema13` | Datos de fuera, enlaces y logs sin datos personales |
+| `npm run test:bff` | El BFF: sesión firmada, autorización real y recorte de datos |
+| `npm run test:policy` | El dominio y el BFF deciden lo mismo (contrato de política) |
+| `npm run audit:secrets` | Secretos, identidad del cliente, HTML sin escapar y sesión en localStorage |
+| `npm run test:security` | Tests de sesión y de los controles de seguridad |
 
 ## Material de la Sesión 1
 - `examples/tema1/` — ejemplos ejecutables del Tema 1
@@ -93,4 +100,21 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 - `prompts/sesion-5.md` — prompts de GitHub Copilot
 - `docs/ejercicio-s5.md` — ejercicio de la sesión
 
-Trabaja en una rama propia por sesión: `git checkout -b s5/<tu-nombre>`.
+## Material de la Sesión 6
+- `examples/tema11/` — endpoint de BFF que agrega sin presentación, configuración de entorno y Node como herramienta
+- `examples/tema12/` — Strategy, Factory, Adapter, Command, Observer (y Singleton como contraejemplo), errores por origen y reintento
+- `examples/tema13/` — datos externos validados, enlaces seguros, logs sin datos personales y `inseguro/` con cinco errores sembrados
+- `server/bff.mjs`, `server/session.mjs` y `server/store.mjs` — el BFF: identidad, autorización y recorte de datos
+- `shared/policy.json` y `src/orders/policy.contract.test.ts` — umbrales compartidos y el test que impide que se separen
+- `src/session/` — slice de sesión: puerto, adapter HTTP, fake, Provider y entrada de usuario
+- `src/orders/ui/approval-form.ts` y `components/ApproveDialog.tsx` — esquema de formulario y diálogo de aprobación
+- `src/orders/infrastructure/gateway-failure.ts` — adapter de errores del BFF
+- `scripts/secrets.mjs` y `src/security.test.ts` — controles de seguridad del cliente
+- `docs/adr/004-bff-sesion-y-seguridad.md` — decisión de BFF y límites de confianza (proyecto final)
+- `prompts/sesion-6.md` — prompts de GitHub Copilot
+- `docs/ejercicio-s6.md` — ejercicio de la sesión
+
+Trabaja en una rama propia por sesión: `git checkout -b s6/<tu-nombre>`.
+
+## Entorno
+`SESSION_SECRET` firma la cookie de sesión del BFF. En desarrollo hay un valor por defecto; en cualquier otro sitio, se pasa por variable de entorno. Nada que empiece por `VITE_` puede contener un secreto: viaja en el bundle.

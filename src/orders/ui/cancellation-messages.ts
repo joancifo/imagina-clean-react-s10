@@ -14,6 +14,8 @@ export const CANCELLATION_MESSAGES = {
   'not-found': 'Este pedido ya no existe',
   conflict: 'Otra persona ha cambiado este pedido. Recarga la lista y vuelve a intentarlo',
   unavailable: 'No hay conexión con el servidor. Inténtalo de nuevo en unos segundos',
+  // Sesión 6 · el BFF ha rechazado el motivo o el cuerpo de la petición.
+  invalid: 'El servidor no ha aceptado el motivo. Revísalo y vuelve a intentarlo',
 } satisfies Record<CancelOrderError, string>;
 
 /** Para lo que NO es previsible (un bug): la pantalla no se rompe, pero tampoco finge saber qué ha pasado. */

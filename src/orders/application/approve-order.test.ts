@@ -34,7 +34,7 @@ it('aprueba en el backend y publica OrderApproved', async () => {
   const result = await approve({ orderId: 'P-1', actor: manager });
   expect(result.ok && result.value.status).toBe('approved');
   expect(approved).toEqual(['P-1']);
-  expect(published).toEqual([{ type: 'OrderApproved', orderId: 'P-1', approvedBy: 'u2', total: 1210, occurredAt: '2026-11-18T18:00:00.000Z' } satisfies OrderApproved]);
+  expect(published).toEqual([{ type: 'OrderApproved', orderId: 'P-1', approvedBy: 'u2', total: 1210, channel: 'web', hasNote: false, occurredAt: '2026-11-18T18:00:00.000Z' } satisfies OrderApproved]);
 });
 
 it('la regla se aplica al estado ACTUAL del backend', async () => {

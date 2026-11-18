@@ -143,9 +143,14 @@ describe('Parte C · la lista nueva, de extremo a extremo', () => {
       expect(url()).toBe('/');
     });
 
-    it('un pedido de más de 5000 €: tras aprobar, navega a su detalle (decisión de UX, no de negocio)', async () => {
+    // Sesión 6 · P-3 es urgente (6050 €): ya no se aprueba de un clic, hay que justificar.
+    it('un pedido urgente: se justifica en el diálogo y después navega a su detalle', async () => {
       renderList({ actor: ADMIN });
       fireEvent.click(within(await rowOf('P-3')).getByRole('button', { name: 'Aprobar' }));
+      const dialog = await screen.findByRole('dialog', { name: 'Aprobar pedido' });
+      fireEvent.change(within(dialog).getByLabelText('Justificación'), { target: { value: 'Cliente histórico, riesgo revisado' } });
+      fireEvent.click(within(dialog).getByRole('checkbox'));
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Confirmar aprobación' }));
       expect(await screen.findByRole('heading', { name: 'Detalle del pedido' })).toBeInTheDocument();
       expect(url()).toBe('/orders/P-3');
     });

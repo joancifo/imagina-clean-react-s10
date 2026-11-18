@@ -15,3 +15,5 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid #dde3ee; }
 .cards { display: flex; gap: 16px; }
 .card { padding: 16px; border: 1px solid #dde3ee; border-radius: 8px; min-width: 140px; }
 button { margin-right: 6px; }
+
+.signin { display: flex; gap: .5rem; align-items: center; padding: .5rem 1rem; background: #fff6d9; border-bottom: 1px solid #f0d78a; }

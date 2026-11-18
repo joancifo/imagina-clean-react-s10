@@ -1,4 +1,5 @@
-// Arranque de la API ficticia de OrderDesk (npm run dev). La lógica vive en app.mjs.
-import { createApp } from './app.mjs';
+// Arranque de OrderDesk (npm run dev): el navegador habla SOLO con el BFF (server/bff.mjs).
+// La API heredada (server/app.mjs) queda detrás; en el curso comparten proceso y almacén.
+import { createBff } from './bff.mjs';
 
-createApp().listen(3001, () => console.log('API de OrderDesk en http://localhost:3001'));
+createBff().listen(3001, () => console.log('BFF de OrderDesk en http://localhost:3001'));

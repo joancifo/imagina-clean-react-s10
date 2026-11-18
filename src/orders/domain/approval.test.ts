@@ -39,7 +39,7 @@ describe('approveOrder', () => {
       ok: true,
       value: {
         order: expect.objectContaining({ id: 'P-1', status: 'approved' }),
-        event: { type: 'OrderApproved', orderId: 'P-1', approvedBy: 'u2', total: 1210, occurredAt: '2026-11-18T18:00:00.000Z' },
+        event: { type: 'OrderApproved', orderId: 'P-1', approvedBy: 'u2', total: 1210, channel: 'web', hasNote: false, occurredAt: '2026-11-18T18:00:00.000Z' },
       },
     });
     expect(original.status).toBe('pending');
