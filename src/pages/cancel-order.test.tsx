@@ -2,9 +2,9 @@
 // Se prueba lo que ve la persona usuaria (botones, textos, avisos), no cómo está escrito el código.
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { useEffect } from 'react';
 import * as api from '../services/api';
-import { AppStoreProvider, useAppStore } from '../store/appStore';
+import { AppStoreProvider } from '../store/appStore';
+import { createInMemorySessionGateway, SessionProvider } from '../session';
 import type { Order, User } from '../shared/types';
 import OrderDetailPage from './OrderDetailPage';
 import DashboardPage from './DashboardPage';
@@ -26,26 +26,23 @@ const ORDERS: Order[] = [
 ];
 const byId = (id: string) => ORDERS.find((o) => o.ord_id === id)!;
 
-function SeedUser({ user }: { user: User }) {
-  const { setUser } = useAppStore();
-  useEffect(() => setUser(user), [setUser, user]);
-  return null;
-}
-
 function renderAt(path: string, user: User) {
   vi.mocked(api.getMe).mockResolvedValue(user);
+  // Sesión 6: la sesión llega por su propio Provider, con el fake del puerto. Ya no se «siembra» en el store.
+  const gateway = createInMemorySessionGateway({ id: user.usr_id, role: user.usr_role as 'admin' | 'manager' | 'agent' });
   return render(
     <MemoryRouter initialEntries={[path]}>
+      <SessionProvider gateway={gateway}>
       <AppStoreProvider>
         {/* Sesión 4: las pantallas reciben el módulo Pedidos por el Provider (aquí, con adapters en memoria). */}
         <OrdersProvider module={createOrdersModule(createInMemoryAdapters(ORDERS.map(toOrder)))}>
-          <SeedUser user={user} />
           <Routes>
               <Route path="/orders/:id" element={<OrderDetailPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
           </Routes>
         </OrdersProvider>
       </AppStoreProvider>
+      </SessionProvider>
     </MemoryRouter>,
   );
 }

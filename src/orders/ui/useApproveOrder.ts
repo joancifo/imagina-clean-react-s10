@@ -6,7 +6,8 @@ import type { Order } from '../domain/order';
 import { APPROVAL_MESSAGES, UNEXPECTED_APPROVAL_ERROR } from './approval-messages';
 import { useOrdersModule } from './OrdersProvider';
 
-export type ApproveOutcome = { ok: true; order: Order } | { ok: false; message: string };
+// Sesión 6 · No todos los fallos se tratan igual: «no hay servidor» se reintenta, «no puedes» no.
+export type ApproveOutcome = { ok: true; order: Order } | { ok: false; message: string; retryable: boolean };
 
 export function useApproveOrder() {
   const { approveOrder } = useOrdersModule();
@@ -17,9 +18,10 @@ export function useApproveOrder() {
       setPending(true);
       try {
         const result = await approveOrder(command);
-        return result.ok ? { ok: true, order: result.value } : { ok: false, message: APPROVAL_MESSAGES[result.error] };
+        if (result.ok) return { ok: true, order: result.value };
+        return { ok: false, message: APPROVAL_MESSAGES[result.error], retryable: result.error === 'unavailable' };
       } catch {
-        return { ok: false, message: UNEXPECTED_APPROVAL_ERROR };
+        return { ok: false, message: UNEXPECTED_APPROVAL_ERROR, retryable: true };
       } finally {
         setPending(false);
       }

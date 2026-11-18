@@ -18,41 +18,42 @@ export function totalOf(order) {
   return subtotal * (1 - discount) * (1 + policy.pricing.vat);
 }
 
-/**
- * PARTE A · Autorización REAL. Devuelve null si se permite, o el código del fallo:
- *   'forbidden'     → quien lo pide no puede (rol o importe por encima de su límite)
- *   'conflict'      → el estado actual del pedido ya no permite esa transición
- *   'invalid-lines' → el pedido no tiene líneas válidas que aprobar
- * Los umbrales salen de shared/policy.json (policy.approval.adminFrom, policy.cancellation.managerLimit).
- * Las mismas reglas que src/orders/domain: si no coinciden, falla npm run test:policy.
- */
+/** Autorización REAL. Devuelve null si se permite, o el código del fallo. */
 export function denyReason(action, order, actor) {
-  void action;
-  void order;
-  void actor;
-  throw new Error('Por implementar · Ejercicio S6, Parte A');
+  if (actor.role === 'agent') return 'forbidden';
+  if (action === 'approve') {
+    if (order.ord_st !== 'pending') return 'conflict';
+    if (order.ln_items.length === 0 || order.ln_items.some((line) => line.qty <= 0)) return 'invalid-lines';
+    if (totalOf(order) > policy.approval.adminFrom && actor.role !== 'admin') return 'forbidden';
+    return null;
+  }
+  if (action === 'cancel') {
+    if (order.ord_st === 'shipped' || order.ord_st === 'cancelled') return 'conflict';
+    if (actor.role === 'admin') return null;
+    if (order.ord_st !== 'pending') return 'forbidden';
+    return totalOf(order) < policy.cancellation.managerLimit ? null : 'forbidden';
+  }
+  return actor.role === 'admin' || actor.role === 'manager' ? null : 'forbidden';
 }
 
 /** Cuerpo de error ÚNICO: un código estable y nada más. Ni stack, ni SQL, ni nombres internos. */
 const fail = (res, status, code) => res.status(status).json({ error: { code } });
 
-/**
- * PARTE A · Validación de entrada: lista blanca de campos. Lo que no está previsto, no entra.
- * Devuelve { value: { reason } } con el motivo ya recortado, o { error: 'invalid-body' }.
- * Un motivo válido tiene entre 3 y 140 caracteres (sin contar los espacios de los extremos).
- */
+/** Validación de entrada: lista blanca de campos. Lo que no está previsto, no entra. */
 function readCancelBody(body) {
-  void body;
-  throw new Error('Por implementar · Ejercicio S6, Parte A');
+  if (body === undefined || body === null) return { error: 'invalid-body' };
+  const keys = Object.keys(body);
+  if (keys.some((key) => key !== 'reason')) return { error: 'invalid-body' };
+  const reason = body.reason;
+  if (typeof reason !== 'string' || reason.trim().length < 3 || reason.length > 140) return { error: 'invalid-body' };
+  return { value: { reason: reason.trim() } };
 }
 
-/**
- * PARTE A · Un agente no recibe importes ni responsables: el dato no sale del servidor.
- * Devuelve el pedido tal cual para el resto de roles, sin el motivo de cancelación (cancel_rsn).
- */
+/** Un agente no recibe importes ni responsables: el dato no sale del servidor. */
 function visibleFor(order, actor) {
-  void actor;
-  return order;
+  const { cancel_rsn: _omit, ...rest } = order;
+  if (actor.role !== 'agent') return rest;
+  return { ...rest, owner_id: undefined, ln_items: [] };
 }
 
 export function createBff({ seed, secret = sessionSecret(), now = () => new Date() } = {}) {
@@ -60,14 +61,10 @@ export function createBff({ seed, secret = sessionSecret(), now = () => new Date
   const app = express();
   app.use(express.json({ limit: '32kb' }));
 
-  /**
-   * PARTE A · Quién eres: SOLO desde la cookie firmada. Nunca desde una cabecera que escribe el cliente.
-   * Pistas: req.header('cookie') · readCookie(header, COOKIE) · readSessionToken(token, { now: now(), secret }).
-   * Devuelve { id, role } (claims.sub y claims.role) o null.
-   */
+  /** Quién eres: solo desde la cookie firmada. Nunca desde una cabecera que escribe el cliente. */
   const actorOf = (req) => {
-    void req;
-    throw new Error('Por implementar · Ejercicio S6, Parte A');
+    const claims = readSessionToken(readCookie(req.header('cookie'), COOKIE), { now: now(), secret });
+    return claims ? { id: claims.sub, role: claims.role } : null;
   };
   const authenticated = (req, res, next) => {
     const actor = actorOf(req);

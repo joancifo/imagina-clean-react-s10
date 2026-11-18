@@ -12,7 +12,7 @@ async function errorsFor(filePath: string, code: string): Promise<string[]> {
 describe('API pública de Pedidos', () => {
   it('el código heredado no puede importar el interior de src/orders', async () => {
     expect(await errorsFor('src/pages/X.tsx', "import { canCancel } from '../orders/domain/cancellation';")).toContain('no-restricted-imports');
-    expect(await errorsFor('src/hooks/x.ts', "import { toOrder } from '../orders/infrastructure/order-mapper';")).toContain('no-restricted-imports');
+    expect(await errorsFor('src/session/x.ts', "import { toOrder } from '../orders/infrastructure/order-mapper';")).toContain('no-restricted-imports');
   });
 
   it('sí puede importar la API pública', async () => {
@@ -20,7 +20,7 @@ describe('API pública de Pedidos', () => {
   });
 
   it('el código heredado real cumple la regla', async () => {
-    const results = await eslint.lintFiles(['src/pages', 'src/components', 'src/hooks', 'src/store', 'src/shared', 'src/services', 'src/shell']);
+    const results = await eslint.lintFiles(['src/pages', 'src/components', 'src/store', 'src/shared', 'src/services', 'src/shell', 'src/session']);
     const errors = results.flatMap((r) => r.messages.map((m) => `${r.filePath}:${m.line} ${m.message}`));
     expect(errors).toEqual([]);
   });

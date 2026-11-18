@@ -23,7 +23,7 @@ const ACTORS: Actor[] = [{ id: 'u1', role: 'admin' }, { id: 'u2', role: 'manager
 const domainAllows = (action: BffAction, order: Order, actor: Actor): boolean =>
   action === 'approve' ? checkApproval(order, actor).ok : action === 'cancel' ? checkCancellation(order, actor).ok : actor.role !== 'agent';
 
-describe.skip('el dominio y el BFF deciden lo mismo', () => {
+describe('el dominio y el BFF deciden lo mismo', () => {
   it('calculan el mismo total para cada pedido', () => {
     for (const dto of DTOS) {
       expect(totalOf(dto as unknown as LegacyOrderJson)).toBeCloseTo(calculateTotal(toOrder(dto)), 6);

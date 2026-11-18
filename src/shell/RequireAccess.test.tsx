@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { canViewDashboard } from '../orders';
 import { RequireAccess } from './RequireAccess';
-import type { Session } from './session';
+import type { Session } from '../session';
 
 const renderGuard = (session: Session) =>
   render(

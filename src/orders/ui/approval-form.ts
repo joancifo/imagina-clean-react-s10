@@ -20,20 +20,22 @@ export const EMPTY_APPROVAL_FORM: ApprovalFormInput = { note: '', confirmTotal: 
 /** `requiresJustification` lo decide el DOMINIO (needsJustification), no el formulario. */
 export type ApprovalFormContext = { requiresJustification: boolean };
 
-/**
- * PARTE B · Comprueba el formulario y devuelve el borrador listo para el caso de uso.
- * Reglas (las fijan los tests de approval-form.test.ts):
- *   · Devuelve TODOS los errores de campo a la vez, no el primero.
- *   · La nota se guarda recortada; vacía o solo espacios es null.
- *   · Con requiresJustification: nota de al menos MIN_NOTE caracteres útiles y confirmTotal marcado.
- *   · La nota nunca pasa de MAX_NOTE caracteres, haga falta o no.
- *   · El canal tiene que estar en APPROVAL_CHANNELS.
- * Quién necesita justificación lo decide el DOMINIO (needsJustification), no este módulo.
- */
+function noteError(note: string, { requiresJustification }: ApprovalFormContext): ApprovalFieldError | null {
+  const trimmed = note.trim();
+  if (note.length > MAX_NOTE) return 'note-too-long';
+  if (!requiresJustification) return null;
+  if (trimmed === '') return 'note-required';
+  return trimmed.length < MIN_NOTE ? 'note-too-short' : null;
+}
+
 export function parseApprovalForm(input: ApprovalFormInput, context: ApprovalFormContext): Result<ApprovalDraft, ApprovalFormErrors> {
-  void input;
-  void context;
-  void APPROVAL_CHANNELS;
-  void ok;
-  return err({});
+  const errors: ApprovalFormErrors = {};
+  const note = noteError(input.note, context);
+  if (note) errors.note = note;
+  if (context.requiresJustification && !input.confirmTotal) errors.confirmTotal = 'confirm-required';
+  if (!(APPROVAL_CHANNELS as string[]).includes(input.channel)) errors.channel = 'channel-unknown';
+
+  if (Object.keys(errors).length > 0) return err(errors);
+  const trimmed = input.note.trim();
+  return ok({ note: trimmed === '' ? null : trimmed, channel: input.channel as ApprovalChannel });
 }
