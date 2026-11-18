@@ -8,16 +8,30 @@ export type OrdersCriteria = { text: string; status: OrderStatus | 'all'; onlyMi
 
 export const DEFAULT_CRITERIA: OrdersCriteria = { text: '', status: 'all', onlyMine: false, sort: 'date' };
 
-// Parámetros de la URL: ?q=hotel&status=pending&mine=1&sort=total
+const STATUSES: OrdersCriteria['status'][] = ['all', 'pending', 'approved', 'shipped', 'cancelled'];
+const SORTS: SortKey[] = ['date', 'total', 'customer'];
 
-// Ejercicio S5 · Parte B. La especificación es orders-criteria.test.ts.
+// Parámetros de la URL: ?q=hotel&status=pending&mine=1&sort=total
+const oneOf = <T extends string>(value: string | null, allowed: T[], fallback: T): T =>
+  (allowed as string[]).includes(value ?? '') ? (value as T) : fallback;
+
+/** La URL la puede escribir cualquiera: un valor desconocido NO rompe la pantalla, vuelve al valor por defecto. */
 export function parseCriteria(params: URLSearchParams): OrdersCriteria {
-  void params;
-  throw new Error('Por implementar (ejercicio S5 · Parte B)');
+  return {
+    text: params.get('q') ?? '',
+    status: oneOf(params.get('status'), STATUSES, DEFAULT_CRITERIA.status),
+    onlyMine: params.get('mine') === '1',
+    sort: oneOf(params.get('sort'), SORTS, DEFAULT_CRITERIA.sort),
+  };
 }
 
 /** Escribe los criterios sobre `base` sin tocar los parámetros ajenos. Los valores por defecto no se escriben. */
 export function writeCriteria(criteria: OrdersCriteria, base: URLSearchParams = new URLSearchParams()): URLSearchParams {
-  void [criteria, base];
-  throw new Error('Por implementar (ejercicio S5 · Parte B)');
+  const params = new URLSearchParams(base);
+  const set = (key: string, value: string, isDefault: boolean) => (isDefault ? params.delete(key) : params.set(key, value));
+  set('q', criteria.text, criteria.text === DEFAULT_CRITERIA.text);
+  set('status', criteria.status, criteria.status === DEFAULT_CRITERIA.status);
+  set('mine', '1', !criteria.onlyMine);
+  set('sort', criteria.sort, criteria.sort === DEFAULT_CRITERIA.sort);
+  return params;
 }

@@ -17,8 +17,7 @@ function setup() {
   return { requests, listOrders, ...renderHook(() => useOrdersList(), { wrapper }) };
 }
 
-// Parte C · paso 1: quita .skip
-describe.skip('useOrdersList', () => {
+describe('useOrdersList', () => {
   it('empieza cargando y pasa a ready con los pedidos del caso de uso', async () => {
     const { result, requests } = setup();
     expect(result.current.state).toEqual({ status: 'loading' });

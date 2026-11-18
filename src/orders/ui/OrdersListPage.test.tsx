@@ -47,8 +47,7 @@ const rowOf = async (id: string) => (await screen.findByRole('button', { name: i
 const visibleIds = () => screen.getAllByRole('row').slice(1).map((row) => within(row).getAllByRole('button')[0].textContent);
 const url = () => screen.getByLabelText('url').textContent;
 
-// Parte C · paso 1: quita .skip (necesita las Partes A y B)
-describe.skip('Parte C · la lista nueva, de extremo a extremo', () => {
+describe('Parte C · la lista nueva, de extremo a extremo', () => {
   describe('criterios en la URL', () => {
     it('un enlace compartido abre la lista ya filtrada', async () => {
       renderList({ url: '/?status=pending&mine=1' });

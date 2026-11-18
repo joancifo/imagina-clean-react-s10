@@ -1,23 +1,22 @@
 // SHELL · Mapa de rutas de la aplicación. Único lugar que relaciona URL, permiso y pantalla.
-// Ejercicio S5 · Parte C · paso 2. Punto de partida: las rutas heredadas, sin permisos y sin 404.
-//   1. «/» pinta OrdersListPage (de '../orders'), que necesita un actor y onNotify.
-//   2. «/» y «/dashboard» se protegen con RequireAccess y una regla de permisos del dominio ('../orders').
-//   3. Cualquier otra URL pinta NotFoundPage.
+// Las pantallas no comprueban si se puede entrar: eso lo decide una regla del dominio a través del guard.
 import { Route, Routes } from 'react-router-dom';
+import { canViewDashboard, canViewOrders, OrdersListPage } from '../orders';
 import DashboardPage from '../pages/DashboardPage';
 import OrderDetailPage from '../pages/OrderDetailPage';
-import OrdersPage from '../pages/OrdersPage';
+import { NotFoundPage } from './NotFoundPage';
+import { RequireAccess } from './RequireAccess';
 import type { Session } from './session';
 
 type Props = { session: Session; onNotify: (message: string) => void };
 
 export function AppRoutes({ session, onNotify }: Props) {
-  void [session, onNotify];
   return (
     <Routes>
-      <Route path="/" element={<OrdersPage />} />
+      <Route path="/" element={<RequireAccess session={session} can={canViewOrders}>{(actor) => <OrdersListPage actor={actor} onNotify={onNotify} />}</RequireAccess>} />
       <Route path="/orders/:id" element={<OrderDetailPage />} />
-      <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/dashboard" element={<RequireAccess session={session} can={canViewDashboard}>{() => <DashboardPage />}</RequireAccess>} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

@@ -28,8 +28,7 @@ const build = (criteria: Partial<OrdersCriteria> = {}, actor: Actor | null = man
   buildOrdersListViewModel(orders, { ...DEFAULT_CRITERIA, ...criteria }, actor);
 const ids = (criteria: Partial<OrdersCriteria> = {}, actor: Actor | null = manager) => build(criteria, actor).rows.map((row) => row.id);
 
-// Parte A · paso 1: quita .skip
-describe.skip('Parte A · view model de la lista', () => {
+describe('Parte A · view model de la lista', () => {
   describe('filtrar', () => {
     it('por texto: cliente o número de pedido, sin distinguir mayúsculas ni espacios en los extremos', () => {
       expect(ids({ text: '  VEGA ' })).toEqual(['P-1003']);

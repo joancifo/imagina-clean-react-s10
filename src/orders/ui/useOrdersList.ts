@@ -1,9 +1,29 @@
 // PRESENTACIÓN · Hook de DATOS: carga la lista con el caso de uso y expone el estado de la carga.
 // No filtra, no ordena, no formatea (eso es el view model) y no sabe que existe HTTP (eso es el adapter).
-// Ejercicio S5 · Parte C · paso 1. La especificación es useOrdersList.test.tsx.
-// Piezas ya escritas: ordersListReducer e INITIAL_ORDERS_LIST (./orders-list-state) · useOrdersModule().listOrders (./OrdersProvider).
-import type { OrdersListState } from './orders-list-state';
+import { useCallback, useEffect, useReducer, useState } from 'react';
+import { INITIAL_ORDERS_LIST, ordersListReducer, type OrdersListState } from './orders-list-state';
+import { useOrdersModule } from './OrdersProvider';
 
 export function useOrdersList(): { state: OrdersListState; reload: () => void } {
-  throw new Error('Por implementar (ejercicio S5 · Parte C)');
+  const { listOrders } = useOrdersModule();
+  const [state, dispatch] = useReducer(ordersListReducer, INITIAL_ORDERS_LIST);
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    let active = true; // la limpieza desactiva esta petición: su respuesta, si llega tarde, se ignora
+    listOrders().then(
+      (orders) => active && dispatch({ type: 'loaded', orders }),
+      () => active && dispatch({ type: 'failed' }),
+    );
+    return () => {
+      active = false;
+    };
+  }, [listOrders, attempt]);
+
+  const reload = useCallback(() => {
+    dispatch({ type: 'reload' });
+    setAttempt((current) => current + 1);
+  }, []);
+
+  return { state, reload };
 }

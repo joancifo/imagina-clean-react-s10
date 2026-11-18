@@ -39,8 +39,7 @@ beforeEach(() => {
 });
 afterEach(() => vi.restoreAllMocks());
 
-// Parte C · paso 2: quita .skip
-describe.skip('Parte C · rutas y permisos', () => {
+describe('Parte C · rutas y permisos', () => {
   describe('panel: ruta protegida', () => {
     it('un manager entra', async () => {
       renderAt('/dashboard', MANAGER);

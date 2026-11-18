@@ -4,8 +4,7 @@ import { DEFAULT_CRITERIA, parseCriteria, writeCriteria, type OrdersCriteria } f
 
 const parse = (search: string) => parseCriteria(new URLSearchParams(search));
 
-// Parte B · paso 1: quita .skip
-describe.skip('Parte B · criterios en la URL (módulo puro)', () => {
+describe('Parte B · criterios en la URL (módulo puro)', () => {
   describe('parseCriteria', () => {
     it('sin parámetros devuelve los criterios por defecto', () => {
       expect(parse('')).toEqual({ text: '', status: 'all', onlyMine: false, sort: 'date' });

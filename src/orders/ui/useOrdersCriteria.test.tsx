@@ -9,8 +9,7 @@ function renderAt(url: string) {
   return renderHook(() => ({ criteria: useOrdersCriteria(), location: useLocation(), navigationType: useNavigationType() }), { wrapper });
 }
 
-// Parte B · paso 1: quita .skip
-describe.skip('useOrdersCriteria', () => {
+describe('useOrdersCriteria', () => {
   it('lee los criterios de la URL (deep link)', () => {
     const { result } = renderAt('/?status=pending&mine=1');
     expect(result.current.criteria[0]).toEqual({ text: '', status: 'pending', onlyMine: true, sort: 'date' });

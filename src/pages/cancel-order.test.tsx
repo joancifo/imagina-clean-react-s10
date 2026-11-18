@@ -1,12 +1,11 @@
 // Ejercicio S3 · Partes A y C · Comportamiento visible de la regla de cancelación en las pantallas heredadas.
 // Se prueba lo que ve la persona usuaria (botones, textos, avisos), no cómo está escrito el código.
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
 import * as api from '../services/api';
 import { AppStoreProvider, useAppStore } from '../store/appStore';
 import type { Order, User } from '../shared/types';
-import OrdersPage from './OrdersPage';
 import OrderDetailPage from './OrderDetailPage';
 import DashboardPage from './DashboardPage';
 import { createInMemoryAdapters, createOrdersModule, OrdersProvider, toOrder } from '../orders';
@@ -42,8 +41,7 @@ function renderAt(path: string, user: User) {
         <OrdersProvider module={createOrdersModule(createInMemoryAdapters(ORDERS.map(toOrder)))}>
           <SeedUser user={user} />
           <Routes>
-            <Route path="/" element={<OrdersPage />} />
-            <Route path="/orders/:id" element={<OrderDetailPage />} />
+              <Route path="/orders/:id" element={<OrderDetailPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
           </Routes>
         </OrdersProvider>
@@ -62,19 +60,8 @@ beforeEach(() => {
 
 afterEach(() => vi.restoreAllMocks());
 
-describe('Parte A · el motivo se valida con el value object', () => {
-  it('un motivo de espacios no cuenta como texto: avisa y no llama a la API', async () => {
-    const alert = vi.spyOn(window, 'alert').mockImplementation(() => {});
-    renderAt('/', MANAGER);
-    const row = (await screen.findByRole('button', { name: 'P-1005' })).closest('tr') as HTMLElement;
-    fireEvent.click(within(row).getByRole('button', { name: 'Cancelar' }));
-    fireEvent.change(screen.getByLabelText('Motivo'), { target: { value: 'a          b' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmar' }));
-    // Sesión 4: la validación ahora pasa por el caso de uso, que es asíncrono → se espera el aviso.
-    await waitFor(() => expect(alert).toHaveBeenCalledWith('El motivo debe tener al menos 10 caracteres'));
-    expect(api.doAction).not.toHaveBeenCalled();
-  });
-});
+// El bloque «Parte A» (motivo de espacios en la lista heredada) se retiró en la Sesión 5 junto con OrdersPage.
+// Ese comportamiento lo protege ahora src/orders/ui/OrdersListPage.test.tsx («un motivo de espacios no es un motivo»).
 
 describe('Parte C · una sola regla de cancelación en las tres pantallas', () => {
   it('detalle: un admin NO puede cancelar un pedido ya enviado', async () => {
