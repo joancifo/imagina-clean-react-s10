@@ -19,5 +19,7 @@ export function toOrder(dto: OrderDto): Order {
     ownerId: dto.owner_id,
     createdAt: dto.crt_ts,
     lines: dto.ln_items.map((line) => ({ sku: line.sku, quantity: line.qty, unitPrice: line.unit_prc })),
+    // Sesión 7 · Solo si llega y es texto: un campo opcional del backend no se convierte en «undefined» escrito.
+    ...(typeof dto.cust_note === 'string' ? { customerNote: dto.cust_note } : {}),
   };
 }

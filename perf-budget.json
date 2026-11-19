@@ -1,0 +1,4 @@
+{
+  "_comment": "Presupuesto de rendimiento (Sesion 7). Se mide el JavaScript que el navegador descarga ANTES de pintar la primera pantalla: el chunk de entrada y lo que importa estaticamente, comprimido con gzip. Los chunks perezosos (import()) no cuentan: se descargan solo si se usan.",
+  "entryGzipKb": 70
+}

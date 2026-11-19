@@ -85,3 +85,30 @@ shared/policy.json      Umbrales compartidos por el dominio y el BFF
 
 ### Mi mapa de confianza (tarea antes de la Sesión 7)
 Para cada dato que tu feature recibe de fuera (URL, formulario, respuesta del backend, almacenamiento): quién lo controla, dónde se comprueba y qué pasa si llega falso. Lo que no tenga una casilla de «dónde se comprueba» es un riesgo abierto.
+
+## Mapa de observabilidad (Sesión 7)
+| Qué se registra | Dónde se añade | Evento | Campos |
+|---|---|---|---|
+| Cancelar, aprobar, cargar el detalle | `composition.ts` · `traced()` | `orders.cancel` · `orders.approve` · `orders.load_detail` | `orderId`, `outcome`, `code`, `durationMs` |
+| Un evento de dominio que no se pudo publicar | `composition.ts` · `observePublisher()` | `events.publish_failed` | `code` (tipo de evento), `errorName` |
+| Una pantalla nueva que se rompe | `FeatureBoundary` en el shell | `ui.crash` | `errorName` |
+
+```
+caso de uso ──▶ traced() ──▶ Logger (puerto) ──▶ búfer ──▶ LogSink HTTP ──▶ BFF /api/telemetry ──▶ salida estándar
+                                  ▲                                          (misma lista blanca: shared/telemetry.json)
+            FeatureBoundary ──────┘
+```
+
+## Migración de las pantallas heredadas (Sesión 7)
+| Pantalla | Red | Versión nueva | Cómo conviven | Estado |
+|---|---|---|---|---|
+| Detalle | `order-detail.characterization.test.tsx` (13 × 2) | `OrderDetailScreen` + `useOrderDetail` + `orders-detail-view-model` | Flag `newOrderDetail`; la heredada, con `lazy()` | Nueva por defecto; heredada como vuelta atrás |
+| Panel | `dashboard.characterization.test.tsx` | `DashboardScreen` + `orders-dashboard` | Sustitución directa | Heredada borrada |
+
+### Mi plan de migración (tarea antes de la Sesión 8)
+Elige una pieza heredada de tu feature. Para cada paso: qué test te protege y cómo se vuelve atrás.
+
+| Paso | Cambio | Test que lo protege | Vuelta atrás |
+|---|---|---|---|
+| 1 | Caracterizar `src/pages/OrderDetailPage.tsx` | `order-detail.characterization.test.tsx` · bloque «heredada» | No cambia código |
+| | | | |

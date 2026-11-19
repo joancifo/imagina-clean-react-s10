@@ -18,6 +18,8 @@ const NO_SYSTEM_CLOCK = [
 ];
 const layer = (name) => ({ group: [`**/${name}`, `**/${name}/**`], message: `Esta capa no puede importar de "${name}".` });
 const composition = { group: ['**/composition'], message: 'Solo la presentación usa la composición.' };
+// Sesión 7 · El núcleo no sabe que lo miden: la observabilidad se añade en composition.ts con decoradores.
+const observability = { group: ['**/observability', '**/observability/**'], message: 'Dominio y aplicación no registran logs: la medición se añade en la composición (traced, observePublisher).' };
 
 export default tseslint.config(
   { files: ['src/orders/**/*.{ts,tsx}'], languageOptions: { parser: tseslint.parser } },
@@ -26,7 +28,7 @@ export default tseslint.config(
   {
     files: ['src/orders/domain/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': ['error', { patterns: [FRAMEWORKS, layer('application'), layer('infrastructure'), layer('ui'), composition] }],
+      'no-restricted-imports': ['error', { patterns: [FRAMEWORKS, layer('application'), layer('infrastructure'), layer('ui'), composition, observability] }],
       'no-restricted-globals': ['error', ...BROWSER_GLOBALS],
       'no-restricted-syntax': ['error', ...NO_SYSTEM_CLOCK],
     },
@@ -36,7 +38,7 @@ export default tseslint.config(
   {
     files: ['src/orders/application/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': ['error', { patterns: [FRAMEWORKS, layer('infrastructure'), layer('ui'), composition] }],
+      'no-restricted-imports': ['error', { patterns: [FRAMEWORKS, layer('infrastructure'), layer('ui'), composition, observability] }],
       'no-restricted-globals': ['error', ...BROWSER_GLOBALS],
       'no-restricted-syntax': ['error', ...NO_SYSTEM_CLOCK],
     },

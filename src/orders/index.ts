@@ -24,6 +24,10 @@ export { canSeeAmounts, canViewDashboard, canViewOrders } from './domain/permiss
 export { useApproveOrder, type ApproveOutcome } from './ui/useApproveOrder';
 export type { ApproveOrderCommand, ApproveOrderError } from './application/approve-order';
 
+// Sesión 7 · detalle nuevo (detrás del flag newOrderDetail) y panel nuevo
+export { OrderDetailScreen } from './ui/OrderDetailScreen';
+export { DashboardScreen } from './ui/DashboardScreen';
+
 // Puente TEMPORAL para el código heredado (src/pages…): traduce sus modelos al dominio.
 // Sesión 5: la lista ya no lo usa. Desaparece cuando se migren el detalle y el panel (proyecto final).
 export { toOrder } from './infrastructure/order-mapper';

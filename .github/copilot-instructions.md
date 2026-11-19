@@ -42,3 +42,12 @@ Este repositorio es material de formación con code smells intencionados en el c
 - A la analítica solo viajan `id`, `by`, `code`, `total` y `at`. Nunca nombres de cliente, motivos ni notas escritas a mano.
 - Los umbrales de negocio viven en `shared/policy.json` y los usan el dominio y el BFF. Si cambias uno, el test `src/orders/policy.contract.test.ts` debe seguir en verde.
 - No uses `dangerouslySetInnerHTML`. Si hace falta un enlace externo, valida el protocolo (`examples/tema13/external-data.ts`).
+
+## Sesión 7 · Rendimiento, observabilidad y refactor
+- No propongas `memo`, `useMemo` o `useCallback` sin una medición (React DevTools Profiler o un test con `<Profiler>` como `examples/tema14/render-count.test.tsx`). Indica qué número cambia.
+- Las pantallas que no forman parte de la primera vista se cargan con `lazy()` desde el shell. Comprueba cualquier cambio de dependencias con `npm run build && npm run perf:budget`.
+- Los logs pasan por el puerto `Logger` de `src/observability`. Dominio y aplicación no registran nada: la medición se añade en `composition.ts` con `traced()` y `observePublisher()`.
+- Campos de log: solo los de `LOG_FIELDS` (`shared/telemetry.json`). Nunca mensajes de error, pilas, nombres, motivos ni notas: se registra el tipo de error (`errorName`).
+- Antes de modificar código de `src/pages`, escribe o amplía sus tests de caracterización. Propón la migración en pasos: caracterizar → extraer funciones puras → versión nueva detrás de una abstracción → misma tabla de tests contra las dos → borrar la vieja.
+- Un cambio de comportamiento durante un refactor se declara en el test con `{ heredada, nueva }` y en el PR. Si no está declarado, es un error.
+- Para tests nuevos: valores exactos (`toBe`, `toEqual`), no `toBeDefined` ni `toBeGreaterThan(0)`. Comprueba los módulos críticos con `npm run mutate -- <archivo>`.

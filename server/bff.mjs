@@ -6,6 +6,7 @@
 // Lo que NO hace: presentación. Devuelve datos, no textos de pantalla.
 import express from 'express';
 import policy from '../shared/policy.json' with { type: 'json' };
+import telemetry from '../shared/telemetry.json' with { type: 'json' };
 import { createSessionToken, readCookie, readSessionToken, sessionSecret } from './session.mjs';
 import { createStore, USERS } from './store.mjs';
 
@@ -56,7 +57,26 @@ function visibleFor(order, actor) {
   return { ...rest, owner_id: undefined, ln_items: [] };
 }
 
-export function createBff({ seed, secret = sessionSecret(), now = () => new Date() } = {}) {
+/** Sesión 7 · Una entrada de telemetría válida: misma lista blanca que el navegador (shared/telemetry.json). */
+const NAME = /^[a-z0-9_.-]{1,64}$/;
+const ENTRY_KEYS = ['level', 'event', 'feature', 'traceId', 'at', 'fields'];
+function isValidEntry(entry) {
+  if (entry === null || typeof entry !== 'object' || Array.isArray(entry)) return false;
+  if (Object.keys(entry).some((key) => !ENTRY_KEYS.includes(key))) return false;
+  if (!telemetry.levels.includes(entry.level) || !NAME.test(entry.event ?? '') || !NAME.test(entry.feature ?? '')) return false;
+  if (entry.traceId !== null && (typeof entry.traceId !== 'string' || entry.traceId.length > 64)) return false;
+  if (typeof entry.at !== 'string' || Number.isNaN(Date.parse(entry.at))) return false;
+  const fields = entry.fields ?? {};
+  if (typeof fields !== 'object' || Array.isArray(fields)) return false;
+  return Object.entries(fields).every(([key, value]) =>
+    telemetry.fields.includes(key) &&
+    ((typeof value === 'string' && value.length <= telemetry.maxText) || (typeof value === 'number' && Number.isFinite(value))));
+}
+
+/** Destino por defecto de la telemetría: una línea JSON por entrada en la salida estándar (lo recoge la plataforma). */
+const stdoutTelemetry = (line) => console.log(JSON.stringify(line));
+
+export function createBff({ seed, secret = sessionSecret(), now = () => new Date(), telemetrySink = stdoutTelemetry } = {}) {
   const store = createStore(seed);
   const app = express();
   app.use(express.json({ limit: '32kb' }));
@@ -115,6 +135,19 @@ export function createBff({ seed, secret = sessionSecret(), now = () => new Date
     const payloadKeys = Object.keys(req.body?.payload ?? {});
     const extraneous = Object.keys(req.body ?? {}).some((key) => !allowed.includes(key));
     if (extraneous || payloadKeys.some((key) => !['id', 'by', 'code', 'total', 'at'].includes(key))) return fail(res, 422, 'invalid-body');
+    return res.status(204).end();
+  });
+
+  // Sesión 7 · Telemetría del navegador. Se valida TODO el lote: si una entrada no cumple, no entra ninguna.
+  // El BFF añade quién la envía (identificador, nunca el nombre) y la hora a la que llegó.
+  app.post('/api/telemetry', authenticated, (req, res) => {
+    const entries = req.body?.entries;
+    const keys = Object.keys(req.body ?? {});
+    if (keys.some((key) => key !== 'entries') || !Array.isArray(entries) || entries.length === 0 || entries.length > telemetry.maxEntries || !entries.every(isValidEntry)) {
+      return fail(res, 422, 'invalid-body');
+    }
+    const receivedAt = now().toISOString();
+    for (const entry of entries) telemetrySink({ ...entry, fields: entry.fields ?? {}, actor: req.actor.id, receivedAt });
     return res.status(204).end();
   });
 

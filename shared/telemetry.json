@@ -1,0 +1,7 @@
+{
+  "_comment": "Contrato de telemetria entre el navegador (src/observability/port.ts) y el BFF (server/bff.mjs). Lista blanca de campos: lo que no esta aqui no se acepta. src/observability/telemetry.contract.test.ts comprueba que los dos lados coinciden.",
+  "levels": ["info", "warn", "error"],
+  "fields": ["orderId", "outcome", "code", "durationMs", "errorName", "route"],
+  "maxEntries": 50,
+  "maxText": 80
+}

@@ -7,4 +7,5 @@ export type OrderDto = {
   owner_id: string;
   crt_ts: string;
   ln_items: { sku: string; qty: number; unit_prc: number }[];
+  cust_note?: string; // Sesión 7 · la usa el detalle
 };

@@ -14,6 +14,8 @@ export type Order = {
   ownerId: string;
   createdAt: string; // ISO 8601
   lines: OrderLine[];
+  /** Sesión 7 · Nota que escribe el cliente. Texto libre: se pinta como texto y nunca viaja a logs ni analítica. */
+  customerNote?: string;
 };
 
 const DISCOUNT_BY_TIER: Record<CustomerTier, number> = policy.pricing.discountByTier;

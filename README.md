@@ -50,6 +50,14 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 | `npm run test:policy` | El dominio y el BFF deciden lo mismo (contrato de política) |
 | `npm run audit:secrets` | Secretos, identidad del cliente, HTML sin escapar y sesión en localStorage |
 | `npm run test:security` | Tests de sesión y de los controles de seguridad |
+| `npm run demo:tema14` | Renders medidos con `<Profiler>`, carga bajo demanda y percentiles de latencia |
+| `npm run demo:tema15` | Tests de caracterización contra la versión heredada y la refactorizada |
+| `npm run demo:tema16` | Los cinco dobles de prueba, builders, tests frágiles y mutación |
+| `npm run test:observability` | Logger con búfer, decoradores, `FeatureBoundary` y `/api/telemetry` |
+| `npm run test:characterization` | Las redes de caracterización del detalle y del panel |
+| `npm run mutate -- <archivo>` | Mutation testing: ¿qué comportamiento ejecutan los tests sin comprobarlo? |
+| `npm run perf:budget` | JavaScript inicial (gzip) frente al presupuesto de `perf-budget.json` (antes: `npm run build`) |
+| `npm run test:map` | Tests, tiempo y `vi.mock` por capa |
 
 ## Material de la Sesión 1
 - `examples/tema1/` — ejemplos ejecutables del Tema 1
@@ -114,7 +122,20 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 - `prompts/sesion-6.md` — prompts de GitHub Copilot
 - `docs/ejercicio-s6.md` — ejercicio de la sesión
 
-Trabaja en una rama propia por sesión: `git checkout -b s6/<tu-nombre>`.
+## Material de la Sesión 7
+- `examples/tema14/` — renders medidos con `<Profiler>`, carga bajo demanda con `lazy()` y percentiles de latencia
+- `examples/tema15/` — tests de caracterización («golden master») y refactor en pasos de una función heredada
+- `examples/tema16/` — dummy, stub, spy, mock y fake; builders; tests frágiles; mutación (`discount.ts`)
+- `src/observability/` — puerto `Logger`, logger con búfer, `traced()`, `observePublisher()` y `FeatureBoundary`
+- `server/bff.mjs` (`/api/telemetry`) y `shared/telemetry.json` — telemetría con la misma lista blanca en cliente y servidor
+- `src/pages/*.characterization.test.tsx` — la red de la migración del detalle y del panel
+- `src/shell/flags.tsx` — flags de lanzamiento (`?flags=-newOrderDetail`)
+- `scripts/mutate.mjs`, `scripts/budget.mjs`, `scripts/test-map.mjs` y `perf-budget.json` — medir antes de opinar
+- `docs/adr/005-migracion-y-observabilidad.md` y `docs/estrategia-testing.md` — hitos del proyecto final
+- `prompts/sesion-7.md` — prompts de GitHub Copilot
+- `docs/ejercicio-s7.md` — ejercicio de la sesión
+
+Trabaja en una rama propia por sesión: `git checkout -b s7/<tu-nombre>`.
 
 ## Entorno
 `SESSION_SECRET` firma la cookie de sesión del BFF. En desarrollo hay un valor por defecto; en cualquier otro sitio, se pasa por variable de entorno. Nada que empiece por `VITE_` puede contener un secreto: viaja en el bundle.

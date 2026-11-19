@@ -78,3 +78,13 @@ it('el código real de src/orders cumple las reglas', async () => {
   const errors = results.flatMap((r) => r.messages.map((m) => `${r.filePath}:${m.line} ${m.message}`));
   expect(errors).toEqual([]);
 });
+
+describe('observabilidad (Sesión 7)', () => {
+  it('ni el dominio ni la aplicación registran logs: no importan observability', async () => {
+    expect(await errorsFor('src/orders/application/x.ts', "import { traced } from '../../observability';")).toContain('no-restricted-imports');
+    expect(await errorsFor('src/orders/domain/x.ts', "import type { Logger } from '../../observability/port';")).toContain('no-restricted-imports');
+  });
+  it('la composición sí: ahí se envuelven los casos de uso', async () => {
+    expect(await errorsFor('src/orders/composition.ts', "import { traced } from '../observability';\nexport const t = traced;")).toEqual([]);
+  });
+});

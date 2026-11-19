@@ -1,7 +1,7 @@
 {
   "name": "orderdesk",
   "private": true,
-  "version": "0.14.0",
+  "version": "0.15.0",
   "type": "module",
   "description": "Backoffice de pedidos ficticio con code smells sembrados para el curso de Clean Architecture",
   "scripts": {
@@ -38,7 +38,15 @@
     "test:bff": "vitest run server/bff.test.mjs",
     "test:policy": "vitest run src/orders/policy.contract.test.ts",
     "audit:secrets": "node scripts/secrets.mjs",
-    "test:security": "vitest run src/security.test.ts src/session"
+    "test:security": "vitest run src/security.test.ts src/session",
+    "demo:tema14": "vitest run examples/tema14",
+    "demo:tema15": "vitest run examples/tema15",
+    "demo:tema16": "vitest run examples/tema16",
+    "test:observability": "vitest run src/observability src/orders/observability.test.ts server/telemetry.test.mjs",
+    "test:characterization": "vitest run src/pages/order-detail.characterization src/pages/dashboard.characterization",
+    "mutate": "node scripts/mutate.mjs",
+    "perf:budget": "node scripts/budget.mjs",
+    "test:map": "node scripts/test-map.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.107.1",

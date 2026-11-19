@@ -39,4 +39,12 @@
 - [ ] A la analítica solo viajan campos de la lista blanca: ningún nombre, motivo ni nota.
 - [ ] `npm run audit:secrets` no encuentra nada y `npm run test:policy` está en verde.
 
+## Rendimiento, observabilidad y refactor (Sesión 7)
+- [ ] Antes de tocar código heredado había tests de caracterización en verde (y siguen en verde contra la versión nueva).
+- [ ] Cada cambio de comportamiento está declarado en el test (`{ heredada, nueva }`) y aquí: …
+- [ ] Tests borrados y qué test los sustituye: …
+- [ ] Las operaciones nuevas dejan rastro (`traced`, `FeatureBoundary`) y solo con campos de `LOG_FIELDS`.
+- [ ] Ninguna optimización sin medición; `npm run perf:budget` antes: … kB · después: … kB.
+- [ ] Mutación del módulo crítico que toco: antes … % · después … %.
+
 ## Cómo lo he comprobado
