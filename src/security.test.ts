@@ -3,7 +3,7 @@
 // Un control que no se ejecuta no es un control: esto se ejecuta en cada `npm test` y en el CI.
 import { findSecrets } from '../scripts/secrets.mjs';
 
-describe.skip('nada de esto viaja al navegador', () => {
+describe('nada de esto viaja al navegador', () => {
   const findings = findSecrets();
   const of = (check: string) => findings.filter((finding) => finding.check === check);
 

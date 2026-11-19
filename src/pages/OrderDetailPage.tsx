@@ -5,12 +5,14 @@ import { formatCurrency, formatDate, trackEvent } from '../shared/utils';
 import { useAppStore } from '../store/appStore';
 import Badge from '../components/Badge';
 import type { Order } from '../shared/types';
-import { canCancel, toActor, toOrder } from '../orders';
+import { canCancel, toOrder } from '../orders';
+import { useSession } from '../session';
 
 export default function OrderDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, setToast } = useAppStore();
+  const { setToast } = useAppStore();
+  const session = useSession();
   const [order, setOrder] = useState<Order | null>(null);
   const [total, setTotal] = useState(0);
 
@@ -29,11 +31,12 @@ export default function OrderDetailPage() {
   if (!order) return <main className="page">Cargando…</main>;
 
   // Regla oficial de cancelación (dominio).
-  const cancellable = canCancel(toOrder(order), toActor(user));
+  const actor = session.status === 'ready' ? session.actor : null;
+  const cancellable = canCancel(toOrder(order), actor);
 
   const cancel = async () => {
-    await doAction(order.ord_id, 'cancel');
-    trackEvent('order_cancelled_detail', { id: order.ord_id });
+    await doAction(order.ord_id, 'cancel', { reason: 'Cancelado desde el detalle' });
+    trackEvent('order_cancelled_detail', { id: order.ord_id, by: actor?.id });
     setToast('Pedido cancelado');
     navigate('/');
   };
@@ -50,8 +53,8 @@ export default function OrderDetailPage() {
           ))}
         </tbody>
       </table>
-      {/* La nota la escribe quien atiende al cliente y llega del backend. Se pinta con el formato que traiga. */}
-      {order.cust_note && <p className="note" dangerouslySetInnerHTML={{ __html: order.cust_note }} />}
+      {/* Sesión 6 · La nota la escribe una persona y llega del backend: se pinta como TEXTO. React escapa por defecto. */}
+      {order.cust_note && <p className="note">{order.cust_note}</p>}
       <p><strong>Total con IVA: {formatCurrency(total)}</strong></p>
       {cancellable && <button onClick={cancel}>Cancelar pedido</button>}
     </main>

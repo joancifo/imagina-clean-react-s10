@@ -5,9 +5,10 @@ import { MemoryRouter } from 'react-router-dom';
 import * as api from '../services/api';
 import { AppStoreProvider } from '../store/appStore';
 import { createInMemoryAdapters, createOrdersModule, OrdersProvider, toOrder, type Actor } from '../orders';
+import { createInMemorySessionGateway, SessionProvider } from '../session';
 import type { Order } from '../shared/types';
 import { AppRoutes } from './AppRoutes';
-import type { Session } from './session';
+import type { Session } from '../session';
 
 vi.mock('../services/api');
 
@@ -16,18 +17,20 @@ const ORDERS: Order[] = [
   { ord_id: 'P-1003', cust_nm: 'Construcciones Vega', cust_tier: 'gold', ord_st: 'pending', owner_id: 'u3', crt_ts: '2026-10-05T08:05:00Z', ln_items: [{ sku: 'D-40', qty: 60, unit_prc: 95 }] },
   { ord_id: 'P-1002', cust_nm: 'Ferretería Sol', cust_tier: 'silver', ord_st: 'approved', owner_id: 'u2', crt_ts: '2026-10-03T11:40:00Z', ln_items: [{ sku: 'C-30', qty: 12, unit_prc: 18 }] },
 ];
-const as = (actor: Actor | null): Session => ({ status: 'ready', actor });
+const as = (actor: Actor | null): Session => ({ status: 'ready', actor, name: null });
 const MANAGER = as({ id: 'u2', role: 'manager' });
 const AGENT = as({ id: 'u3', role: 'agent' });
 
 function renderAt(path: string, session: Session) {
   return render(
     <MemoryRouter initialEntries={[path]}>
+      <SessionProvider gateway={createInMemorySessionGateway(session.status === 'ready' ? session.actor : null)}>
       <AppStoreProvider>
         <OrdersProvider module={createOrdersModule(createInMemoryAdapters(ORDERS.map(toOrder)))}>
           <AppRoutes session={session} onNotify={() => {}} />
         </OrdersProvider>
       </AppStoreProvider>
+      </SessionProvider>
     </MemoryRouter>,
   );
 }

@@ -1,6 +1,7 @@
 // INFRAESTRUCTURA · Adapter conducido (de salida): implementa el puerto OrderGateway con fetch.
 // Es el ÚNICO archivo que sabe que hay HTTP, rutas, cabeceras, códigos de estado y DTO del backend.
 import { OrderGatewayError, type OrderGateway } from '../application/ports';
+import { failureFor, readBody } from './gateway-failure';
 import type { OrderDto } from './order-dto';
 import { toOrder } from './order-mapper';
 
@@ -13,37 +14,39 @@ async function send(fetchFn: typeof fetch, url: string, init?: RequestInit): Pro
   }
 }
 
-/** Adapter de errores: convierte códigos HTTP en fallos estables del puerto. */
-function failureFor(response: Response): OrderGatewayError {
-  if (response.status === 404) return new OrderGatewayError('not-found', `HTTP 404 · ${response.url}`);
-  if (response.status === 409) return new OrderGatewayError('conflict', `HTTP 409 · ${response.url}`);
-  return new OrderGatewayError('unavailable', `HTTP ${response.status} · ${response.url}`);
+/** Adapter de errores: código del BFF primero, estado HTTP después (gateway-failure.ts). */
+async function errorFor(response: Response): Promise<OrderGatewayError> {
+  const failure = failureFor(response.status, await readBody(response));
+  return new OrderGatewayError(failure, `HTTP ${response.status} · ${failure}`);
 }
 
 export function createHttpOrderGateway(fetchFn: typeof fetch = fetch, baseUrl = '/api'): OrderGateway {
   return {
     async findById(id) {
-      const response = await send(fetchFn, `${baseUrl}/orders/${encodeURIComponent(id)}`);
+      const response = await send(fetchFn, `${baseUrl}/orders/${encodeURIComponent(id)}`, { credentials: 'include' });
       if (response.status === 404) return null;
-      if (!response.ok) throw failureFor(response);
+      if (!response.ok) throw await errorFor(response);
       const dto: OrderDto = await response.json();
       return toOrder(dto);
     },
 
-    async cancel({ orderId, reason, cancelledBy }) {
+    // Sesión 6 · La identidad ya NO viaja en el cuerpo ni en una cabecera elegida por el cliente:
+    // va en la cookie de sesión (HttpOnly) que pone el BFF. Por eso credentials: 'include'.
+    async cancel({ orderId, reason }) {
       const response = await send(fetchFn, `${baseUrl}/orders/${encodeURIComponent(orderId)}/cancel`, {
         method: 'POST',
-        headers: { 'content-type': 'application/json', 'x-user-id': cancelledBy },
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ reason }),
       });
-      if (!response.ok) throw failureFor(response);
+      if (!response.ok) throw await errorFor(response);
     },
-    async approve({ orderId, approvedBy }) {
+    async approve({ orderId }) {
       const response = await send(fetchFn, `${baseUrl}/orders/${encodeURIComponent(orderId)}/approve`, {
         method: 'POST',
-        headers: { 'x-user-id': approvedBy },
+        credentials: 'include',
       });
-      if (!response.ok) throw failureFor(response);
+      if (!response.ok) throw await errorFor(response);
     },
   };
 }
