@@ -11,7 +11,9 @@ export type Order = {
   customerName: string;
   customerTier: CustomerTier;
   status: OrderStatus;
-  ownerId: string;
+  /** Sesión 8 · null = el backend NO nos ha dicho quién es (a un agente le recorta este campo).
+   *  Un tipo que promete un string cuando puede no llegar es un tipo que miente. */
+  ownerId: string | null;
   createdAt: string; // ISO 8601
   lines: OrderLine[];
   /** Sesión 7 · Nota que escribe el cliente. Texto libre: se pinta como texto y nunca viaja a logs ni analítica. */

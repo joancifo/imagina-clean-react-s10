@@ -53,20 +53,42 @@ function parseLine(raw: unknown, index: number): Result<OrderDtoLine, DtoProblem
 }
 
 /**
- * Ejercicio S8 · Parte A · Comprueba que lo que ha llegado tiene la forma del DTO y devuelve SOLO los
- * campos conocidos. No traduce al dominio (eso es order-mapper.ts): aquí se decide si el dato es utilizable.
- *
- * Qué tiene que comprobar, en este orden (el orden importa: el primer problema que encuentra, lo devuelve):
- *   1. que `raw` sea un objeto (ni null, ni un array, ni una cadena: una respuesta de fuera puede ser cualquier cosa);
- *   2. que cada campo de REQUIRED_TEXT esté y sea texto           → problemFor(campo, valor)
- *   3. que cada campo de OPTIONAL_TEXT, SI está, sea texto        → { field, reason: 'type' }
- *   4. que `ln_items` sea un array, y cada línea, con parseLine   → ya escrito más arriba
- *   5. que `ord_st` y `cust_tier` sean valores que conocemos      → { field, reason: 'value' }
- *   6. devolver un objeto NUEVO con los campos conocidos y nada más (lista blanca),
- *      poniendo `owner_id` y `cust_note` solo si han llegado como texto.
+ * Comprueba que lo que ha llegado tiene la forma del DTO y devuelve SOLO los campos conocidos.
+ * No traduce al dominio (eso es order-mapper.ts): aquí se decide si el dato es utilizable.
  */
-export function parseOrderDto(_raw: unknown): Result<OrderDto, DtoProblem> {
-  throw new Error('Por implementar · Ejercicio S8, Parte A');
+export function parseOrderDto(raw: unknown): Result<OrderDto, DtoProblem> {
+  if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) return err({ field: '(raíz)', reason: raw === undefined ? 'missing' : 'type' });
+  const source = raw as Record<string, unknown>;
+
+  for (const field of REQUIRED_TEXT) {
+    if (!isText(source[field])) return err(problemFor(field, source[field]));
+  }
+  for (const field of OPTIONAL_TEXT) {
+    if (source[field] !== undefined && !isText(source[field])) return err({ field, reason: 'type' });
+  }
+  if (!Array.isArray(source.ln_items)) return err(problemFor('ln_items', source.ln_items));
+
+  const lines: OrderDtoLine[] = [];
+  for (const [index, raw_line] of source.ln_items.entries()) {
+    const line = parseLine(raw_line, index);
+    if (!line.ok) return line;
+    lines.push(line.value);
+  }
+
+  // Valores de vocabulario: el backend puede añadir un estado nuevo mañana. Mejor enterarse en la frontera.
+  if (!(ORDER_STATUSES as readonly string[]).includes(source.ord_st as string)) return err({ field: 'ord_st', reason: 'value' });
+  if (!(CUSTOMER_TIERS as readonly string[]).includes(source.cust_tier as string)) return err({ field: 'cust_tier', reason: 'value' });
+
+  return ok({
+    ord_id: source.ord_id as string,
+    cust_nm: source.cust_nm as string,
+    cust_tier: source.cust_tier as string,
+    ord_st: source.ord_st as string,
+    crt_ts: source.crt_ts as string,
+    ln_items: lines,
+    ...(isText(source.owner_id) ? { owner_id: source.owner_id } : {}),
+    ...(isText(source.cust_note) ? { cust_note: source.cust_note } : {}),
+  });
 }
 
 /** Mensaje técnico uniforme para logs y errores de adapter. Nunca se enseña en pantalla. */

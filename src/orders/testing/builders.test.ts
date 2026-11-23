@@ -2,7 +2,6 @@
 // Ejercicio S8 · Parte A · Los datos de prueba también se prueban.
 // Un builder con un valor por defecto imposible (un pedido que el dominio nunca aceptaría, un DTO que el
 // backend nunca enviaría) convierte toda la suite en una demostración sobre datos que no existen.
-// OMITIDO de partida · Quita los `.skip` cuando empieces la Parte A.
 import { canCancel } from '../domain/cancellation';
 import { calculateTotal, isUrgent } from '../domain/order';
 import { MANAGER_CANCEL_LIMIT } from '../domain/cancellation';
@@ -10,7 +9,7 @@ import { parseOrderDto } from '../infrastructure/order-dto';
 import { toOrder } from '../infrastructure/order-mapper';
 import { aDto, aHugeOrder, aManager, anOrder, anOrderWithoutOwner, anUrgentOrder, aTrimmedDto } from './builders';
 
-describe.skip('Parte A · el kit de datos de prueba', () => {
+describe('Parte A · el kit de datos de prueba', () => {
   it('el pedido por defecto es un pedido que el dominio acepta', () => {
     const order = anOrder();
     expect(calculateTotal(order)).toBeCloseTo(121, 2); // 100 € · sin descuento · IVA 21 %

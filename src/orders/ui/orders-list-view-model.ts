@@ -27,8 +27,7 @@ export type OrderRowViewModel = {
 export type OrdersListViewModel = {
   summary: string;
   showAmounts: boolean;
-  /** Ejercicio S8 · Parte A · false = este actor no recibe el responsable del backend,
-   *  así que no puede filtrar por él y la pantalla no debería ofrecérselo. */
+  /** Sesión 8 · false = este actor no recibe el responsable del backend, así que no puede filtrar por él. */
   canFilterByOwner: boolean;
   rows: OrderRowViewModel[];
   /** null cuando hay filas. */
@@ -53,7 +52,8 @@ function matches(criteria: OrdersCriteria, actor: Actor | null) {
   return (order: Order): boolean =>
     (text === '' || order.customerName.toLowerCase().includes(text) || order.id.toLowerCase().includes(text)) &&
     (criteria.status === 'all' || order.status === criteria.status) &&
-    (!criteria.onlyMine || order.ownerId === actor?.id);
+    // Sesión 8 · «Solo míos» solo puede aplicarse si el backend nos ha dicho de quién es cada pedido.
+    (!criteria.onlyMine || (order.ownerId !== null && order.ownerId === actor?.id));
 }
 
 function summarize(visible: Order[], actor: Actor | null, showAmounts: boolean): string {
@@ -67,20 +67,21 @@ function summarize(visible: Order[], actor: Actor | null, showAmounts: boolean):
 }
 
 export function buildOrdersListViewModel(orders: readonly Order[], criteria: OrdersCriteria, actor: Actor | null): OrdersListViewModel {
-  const visible = orders.filter(matches(criteria, actor)).sort(COMPARATORS[criteria.sort]); // filter ya devuelve una copia
   const showAmounts = canSeeAmounts(actor);
-  const filtered = criteria.text.trim() !== '' || criteria.status !== 'all' || criteria.onlyMine;
+  // Un criterio que no se puede aplicar no se aplica a medias: se ignora, y la pantalla no lo ofrece.
+  const effective = showAmounts ? criteria : { ...criteria, onlyMine: false };
+  const visible = orders.filter(matches(effective, actor)).sort(COMPARATORS[effective.sort]); // filter ya devuelve una copia
+  const filtered = effective.text.trim() !== '' || effective.status !== 'all' || effective.onlyMine;
 
   return {
     summary: summarize(visible, actor, showAmounts),
     showAmounts,
-    canFilterByOwner: true, // Ejercicio S8 · Parte A · hoy siempre: por eso un agente ve un filtro que le vacía la lista
-
+    canFilterByOwner: showAmounts,
     rows: visible.map((order) => ({
       id: order.id,
       customer: order.customerName,
       date: formatDate(order.createdAt),
-      owner: showAmounts ? (order.ownerId === actor?.id ? 'Yo' : order.ownerId) : null,
+      owner: showAmounts ? (order.ownerId === null ? '—' : order.ownerId === actor?.id ? 'Yo' : order.ownerId) : null,
       statusLabel: STATUS_LABELS[order.status],
       tone: isUrgent(order) ? 'urgent' : order.status === 'cancelled' ? 'muted' : 'normal',
       total: showAmounts ? formatCurrency(calculateTotal(order)) : null,

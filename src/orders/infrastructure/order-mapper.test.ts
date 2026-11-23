@@ -7,7 +7,6 @@
 //
 // Los casos «raros» de este archivo no son inventados: son lo que el BFF envía de verdad (recorta campos
 // para un agente) y lo que cualquier backend acaba enviando algún día (un número como texto, un estado nuevo).
-// OMITIDO de partida · Quita los `.skip` cuando empieces la Parte A.
 import { aDto, aTrimmedDto, SEED_DTOS } from '../testing';
 import { describeProblem, parseOrderDto } from './order-dto';
 import { parseOrder, parseOrders, toOrder } from './order-mapper';
@@ -17,7 +16,7 @@ const value = <T>(result: { ok: true; value: T } | { ok: false; error: unknown }
   return result.value;
 };
 
-describe.skip('Parte A · traducir el backend al dominio', () => {
+describe('Parte A · traducir el backend al dominio', () => {
   it('traduce los nombres del backend al lenguaje del negocio', () => {
     expect(toOrder(aDto({ ord_id: 'P-7', cust_nm: 'Hotel Brisa', cust_tier: 'silver', ord_st: 'approved' }))).toEqual({
       id: 'P-7',
@@ -50,7 +49,7 @@ describe.skip('Parte A · traducir el backend al dominio', () => {
   });
 });
 
-describe.skip('Parte A · rechazar lo que no se puede usar', () => {
+describe('Parte A · rechazar lo que no se puede usar', () => {
   it('un campo obligatorio que no llega se dice por su nombre', () => {
     const { ord_id: _omit, ...withoutId } = aDto();
     expect(parseOrder(withoutId)).toEqual({ ok: false, error: { field: 'ord_id', reason: 'missing' } });
@@ -122,7 +121,7 @@ describe.skip('Parte A · rechazar lo que no se puede usar', () => {
 
 // Contrato con el backend del curso: si alguien cambia server/store.mjs, este test lo dice aquí
 // y no tres capas más adentro, con otro nombre y sin pistas.
-describe.skip('Parte A · los datos reales del backend pasan por la frontera', () => {
+describe('Parte A · los datos reales del backend pasan por la frontera', () => {
   it.each(SEED_DTOS.map((dto) => [dto.ord_id, dto] as const))('%s', (_id, dto) => {
     expect(parseOrder(dto).ok).toBe(true);
   });

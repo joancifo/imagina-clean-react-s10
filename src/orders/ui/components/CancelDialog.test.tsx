@@ -5,7 +5,6 @@
 // eventos que el navegador. Dos de los tests de este archivo solo fallan con `userEvent`.
 //
 // Documentación: https://testing-library.com/docs/user-event/intro
-// OMITIDO de partida · Quita el `.skip` cuando empieces la Parte B. Dos de estos tests fallan: son el ejercicio.
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CancelDialog } from './CancelDialog';
@@ -20,7 +19,7 @@ function open(props: Partial<React.ComponentProps<typeof CancelDialog>> = {}) {
   return { ...view, user, onConfirm, onClose, field: () => screen.getByLabelText('Motivo') };
 }
 
-describe.skip('Parte B · diálogo de cancelación', () => {
+describe('Parte B · diálogo de cancelación', () => {
   it('se presenta: tiene nombre accesible y dice qué pedido se va a cancelar', () => {
     open();
     expect(screen.getByRole('dialog', { name: 'Cancelar pedido' })).toBeInTheDocument();

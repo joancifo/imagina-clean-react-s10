@@ -23,7 +23,7 @@ export interface Clock {
 // ── Entrada y salida explícitas ──
 export type Actor = { id: string; role: 'admin' | 'manager' | 'agent' };
 export type AssignOrderCommand = { orderId: string; assigneeId: string; actor: Actor };
-export type Assignment = { orderId: string; from: string; to: string; at: string };
+export type Assignment = { orderId: string; from: string | null; to: string; at: string };
 export type AssignOrderError = 'forbidden' | 'not-found' | 'unknown-user' | 'inactive-user' | 'order-closed' | 'same-owner';
 
 export type AssignOrderDeps = { orders: OrderStore; users: UserDirectory; notifier: Notifier; clock: Clock };

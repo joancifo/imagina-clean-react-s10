@@ -46,7 +46,7 @@ function readCancelBody(body) {
   const keys = Object.keys(body);
   if (keys.some((key) => key !== 'reason')) return { error: 'invalid-body' };
   const reason = body.reason;
-  if (typeof reason !== 'string' || reason.trim().length < 3 || reason.length > 140) return { error: 'invalid-body' };
+  if (typeof reason !== 'string' || reason.trim().length < 3 || reason.length > policy.cancellation.reasonMaxLength) return { error: 'invalid-body' };
   return { value: { reason: reason.trim() } };
 }
 

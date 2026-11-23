@@ -90,7 +90,7 @@ export function OrdersListPage({ actor, onNotify }: Props) {
   return (
     <main className="page">
       <h1>Pedidos</h1>
-      <OrdersFilters criteria={criteria} onChange={setCriteria} />
+      <OrdersFilters criteria={criteria} canFilterByOwner={viewModel.canFilterByOwner} onChange={setCriteria} />
       <label>
         <input type="checkbox" checked={compact} onChange={(e) => setCompact(e.target.checked)} /> Compacto
       </label>

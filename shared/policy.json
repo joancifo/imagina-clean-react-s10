@@ -2,7 +2,7 @@
   "_comment": "Umbrales y tarifas del negocio. Dato compartido entre el dominio (TypeScript, navegador) y el BFF (Node). El CODIGO de cada lado aplica la regla; este archivo evita que los NUMEROS se separen. Un test de contrato comprueba que ambos deciden igual.",
   "pricing": { "vat": 0.21, "discountByTier": { "gold": 0.1, "silver": 0.05, "standard": 0 } },
   "approval": { "adminFrom": 10000 },
-  "cancellation": { "managerLimit": 5000 },
+  "cancellation": { "managerLimit": 5000, "reasonMaxLength": 140 },
   "urgency": { "from": 3000 },
   "session": { "ttlMinutes": 60, "cookieName": "od_session" }
 }

@@ -49,11 +49,8 @@ export const anApprovedOrder = (overrides: Partial<Order> = {}): Order => anOrde
 export const aShippedOrder = (overrides: Partial<Order> = {}): Order => anOrder({ status: 'shipped', ...overrides });
 export const aCancelledOrder = (overrides: Partial<Order> = {}): Order => anOrder({ status: 'cancelled', ...overrides });
 
-/** Ejercicio S8 · Parte A · Lo que recibe un AGENTE: el BFF no le dice de quién es el pedido ni le envía
- *  las líneas. Hoy esto no se puede escribir sin mentirle al compilador, porque `Order.ownerId` promete
- *  un string que el backend no siempre manda. Quitar ese `as` es el primer paso de la Parte A. */
-export const anOrderWithoutOwner = (overrides: Partial<Order> = {}): Order =>
-  anOrder({ ownerId: null as unknown as string, lines: [], ...overrides });
+/** Sesión 8 · Lo que recibe un AGENTE: el BFF no le dice de quién es el pedido ni le envía las líneas. */
+export const anOrderWithoutOwner = (overrides: Partial<Order> = {}): Order => anOrder({ ownerId: null, lines: [], ...overrides });
 
 // ── Actores ───────────────────────────────────────────────────────────────────────
 export const anActor = (overrides: Partial<Actor> = {}): Actor => ({ id: 'u2', role: 'manager', ...overrides });

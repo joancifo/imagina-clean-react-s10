@@ -4,7 +4,6 @@
 // mensaje esté ATADO al campo: `aria-invalid` dice «este campo está mal» y `aria-describedby` dice «el
 // porqué está aquí». `toHaveAccessibleDescription` comprueba exactamente eso, y no el HTML que lo produce:
 // el test sobrevive a un cambio de maquetación y falla si se rompe la relación.
-// OMITIDO de partida · Quita el `.skip` cuando empieces la Parte B. Dos de estos tests fallan: son el ejercicio.
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EMPTY_APPROVAL_FORM, type ApprovalFormErrors, type ApprovalFormInput } from '../approval-form';
@@ -30,7 +29,7 @@ function open(options: { values?: Partial<ApprovalFormInput>; errors?: ApprovalF
   return { user, onChange, onConfirm, onClose };
 }
 
-describe.skip('Parte B · diálogo de aprobación', () => {
+describe('Parte B · diálogo de aprobación', () => {
   it('enseña el pedido y su importe', () => {
     open();
     expect(screen.getByRole('dialog', { name: 'Aprobar pedido' })).toBeInTheDocument();

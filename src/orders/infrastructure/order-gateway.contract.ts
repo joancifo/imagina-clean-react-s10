@@ -85,7 +85,7 @@ export function describeOrderGatewayContract(name: string, factory: GatewayFacto
     // Un contrato no es solo «qué devuelve cuando todo va bien»: también es «qué rechaza».
     // Estos tres casos son los que el fake en memoria no sabía, y por eso veinte tests que lo usaban
     // estaban demostrando un comportamiento que en producción no existe.
-    describe.skip('lo que valida el backend', () => {
+    describe('lo que valida el backend', () => {
       it(`un motivo más largo de ${REASON_MAX_LENGTH} caracteres es invalid, y el pedido no cambia`, async () => {
         // El cast es deliberado: el puerto recibe lo que le den. El contrato dice qué pasa ENTONCES,
         // no qué pasa cuando quien llama se porta bien. (El dominio ya no deja construir uno así.)

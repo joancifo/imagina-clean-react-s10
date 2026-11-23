@@ -7,7 +7,7 @@
 //      El motivo se recorta al ENVIAR, que es cuando ya se sabe dónde terminan las palabras.
 //   2. Al abrirse, el foco entra en el diálogo. Si no, quien navega con teclado sigue en la fila de la tabla
 //      y tiene que adivinar que se ha abierto algo.
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = { orderId: string; busy: boolean; error: string | null; onConfirm: (reason: string) => void; onClose: () => void };
 
@@ -15,16 +15,25 @@ const ERROR_ID = 'cancelar-motivo-error';
 
 export function CancelDialog({ orderId, busy, error, onConfirm, onClose }: Props) {
   const [reason, setReason] = useState('');
+  const field = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    field.current?.focus();
+  }, []);
+
   return (
     <div className="dialog" role="dialog" aria-label="Cancelar pedido">
       <h2>Cancelar {orderId}</h2>
       <textarea
+        ref={field}
         aria-label="Motivo"
         value={reason}
-        onChange={(e) => setReason(e.target.value.trim())}
+        aria-invalid={error !== null}
+        aria-describedby={error ? ERROR_ID : undefined}
+        onChange={(e) => setReason(e.target.value)}
       />
-      {error && <p role="alert">{error}</p>}
-      <button onClick={() => onConfirm(reason)} disabled={busy}>Confirmar</button>
+      {error && <p id={ERROR_ID} role="alert">{error}</p>}
+      <button onClick={() => onConfirm(reason.trim())} disabled={busy} aria-busy={busy}>Confirmar</button>
       <button onClick={onClose}>Volver</button>
     </div>
   );

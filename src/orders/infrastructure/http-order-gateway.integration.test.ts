@@ -9,7 +9,6 @@
 // Qué NO se prueba aquí: que el backend responda de verdad así. Eso lo dice el test de CONTRATO
 // (order-gateway.contract.test.ts), que habla con `server/bff.mjs`. Los dos hacen falta:
 // el contrato dice qué respuestas EXISTEN; este archivo dice qué hacemos con cada una.
-// OMITIDO de partida · Quita los `.skip` cuando empieces la Parte C.
 import { OrderGatewayError } from '../application/ports';
 import { createCancellationReason, type CancellationReason } from '../domain/cancellation-reason';
 import { API, aDto, failsWith, networkIsDown, ordersServer, recordRequests, respondsWithJson, respondsWithText } from '../testing';
@@ -35,7 +34,7 @@ const failureOf = async (promise: Promise<unknown>) => {
   }
 };
 
-describe.skip('Parte C · la petición que sale', () => {
+describe('Parte C · la petición que sale', () => {
   it('pide el pedido por su ruta, con la cookie de sesión y sin inventarse cabeceras', async () => {
     const { requests, handler } = recordRequests();
     server.use(handler);
@@ -68,7 +67,7 @@ describe.skip('Parte C · la petición que sale', () => {
   });
 });
 
-describe.skip('Parte C · cada respuesta, un fallo estable', () => {
+describe('Parte C · cada respuesta, un fallo estable', () => {
   it('404 al leer no es un error: es «no existe»', async () => {
     expect(await gateway().findById('P-9999')).toBeNull();
   });
@@ -105,7 +104,7 @@ describe.skip('Parte C · cada respuesta, un fallo estable', () => {
   });
 });
 
-describe.skip('Parte C · un 200 con el cuerpo equivocado también es un fallo', () => {
+describe('Parte C · un 200 con el cuerpo equivocado también es un fallo', () => {
   it('un backend que cambia un tipo sin avisar se detecta en la frontera, no en la pantalla', async () => {
     server.use(respondsWithJson('get', '/orders/:id', { ...aDto(), ln_items: [{ sku: 'A-10', qty: '40', unit_prc: 32.5 }] }));
     expect(await failureOf(gateway().findById('P-1005'))).toBe('invalid');
