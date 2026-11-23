@@ -27,6 +27,9 @@ export type OrderRowViewModel = {
 export type OrdersListViewModel = {
   summary: string;
   showAmounts: boolean;
+  /** Ejercicio S8 · Parte A · false = este actor no recibe el responsable del backend,
+   *  así que no puede filtrar por él y la pantalla no debería ofrecérselo. */
+  canFilterByOwner: boolean;
   rows: OrderRowViewModel[];
   /** null cuando hay filas. */
   emptyMessage: string | null;
@@ -71,6 +74,8 @@ export function buildOrdersListViewModel(orders: readonly Order[], criteria: Ord
   return {
     summary: summarize(visible, actor, showAmounts),
     showAmounts,
+    canFilterByOwner: true, // Ejercicio S8 · Parte A · hoy siempre: por eso un agente ve un filtro que le vacía la lista
+
     rows: visible.map((order) => ({
       id: order.id,
       customer: order.customerName,

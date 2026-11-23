@@ -62,8 +62,10 @@ export default tseslint.config(
   },
 
   // Sesión 5 · COMPONENTES PRESENTACIONALES: reciben datos y callbacks por props; no se conectan a nada.
+  // Sesión 8 · Sus TESTS quedan fuera: un test de componente sí usa la librería de pruebas y el kit de datos.
   {
     files: ['src/orders/ui/components/**/*.{ts,tsx}'],
+    ignores: ['**/*.test.ts', '**/*.test.tsx'],
     rules: {
       'no-restricted-imports': ['error', { patterns: [
         layer('infrastructure'), layer('application'), composition,

@@ -1,6 +1,7 @@
 {
   "entry": [
     "scripts/*.mjs",
+    "server/app.mjs",
     "examples/**/*.test.{ts,tsx}",
     "src/**/*.test.{ts,tsx}"
   ],

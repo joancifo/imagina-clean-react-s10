@@ -2,9 +2,9 @@
 // Se ejecuta contra el fake en memoria y contra el adapter HTTP con el backend de verdad.
 // Si los dos pasan, el fake es un sustituto fiel (Liskov) y los tests que lo usan dicen la verdad.
 import { OrderGatewayError, type GatewayFailure, type OrderGateway } from '../application/ports';
-import { createCancellationReason, type CancellationReason } from '../domain/cancellation-reason';
+import { REASON_MAX_LENGTH, createCancellationReason, type CancellationReason } from '../domain/cancellation-reason';
 
-/** Datos que debe tener cada implementación al empezar: los de server/app.mjs (SEED_ORDERS). */
+/** Datos que debe tener cada implementación al empezar: los de server/store.mjs (SEED_ORDERS). */
 export type GatewayFactory = () => Promise<{ gateway: OrderGateway; dispose?: () => Promise<void> }>;
 
 const reason = createCancellationReason('Cliente duplicado en el ERP');
@@ -79,6 +79,32 @@ export function describeOrderGatewayContract(name: string, factory: GatewayFacto
 
     it('cancel de un pedido que no existe es not-found', async () => {
       expect(await failureOf(gateway.cancel({ orderId: 'P-9999', reason: REASON, cancelledBy: 'u1' }))).toBe('not-found');
+    });
+
+    // ── Sesión 8 · Lo que el backend VALIDA ────────────────────────────────────────
+    // Un contrato no es solo «qué devuelve cuando todo va bien»: también es «qué rechaza».
+    // Estos tres casos son los que el fake en memoria no sabía, y por eso veinte tests que lo usaban
+    // estaban demostrando un comportamiento que en producción no existe.
+    describe.skip('lo que valida el backend', () => {
+      it(`un motivo más largo de ${REASON_MAX_LENGTH} caracteres es invalid, y el pedido no cambia`, async () => {
+        // El cast es deliberado: el puerto recibe lo que le den. El contrato dice qué pasa ENTONCES,
+        // no qué pasa cuando quien llama se porta bien. (El dominio ya no deja construir uno así.)
+        const tooLong = 'x'.repeat(REASON_MAX_LENGTH + 60) as CancellationReason;
+        expect(await failureOf(gateway.cancel({ orderId: 'P-1005', reason: tooLong, cancelledBy: 'u1' }))).toBe('invalid');
+        expect((await gateway.findById('P-1005'))?.status).toBe('pending');
+      });
+
+      it('un motivo de la longitud máxima exacta sí se acepta', async () => {
+        const exact = 'x'.repeat(REASON_MAX_LENGTH) as CancellationReason;
+        await gateway.cancel({ orderId: 'P-1005', reason: exact, cancelledBy: 'u1' });
+        expect((await gateway.findById('P-1005'))?.status).toBe('cancelled');
+      });
+
+      it('cancelar cambia el estado y NADA más', async () => {
+        const before = await gateway.findById('P-1005');
+        await gateway.cancel({ orderId: 'P-1005', reason: REASON, cancelledBy: 'u1' });
+        expect(await gateway.findById('P-1005')).toEqual({ ...before, status: 'cancelled' });
+      });
     });
   });
 }

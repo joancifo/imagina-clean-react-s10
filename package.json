@@ -1,7 +1,7 @@
 {
   "name": "orderdesk",
   "private": true,
-  "version": "0.15.0",
+  "version": "0.16.0",
   "type": "module",
   "description": "Backoffice de pedidos ficticio con code smells sembrados para el curso de Clean Architecture",
   "scripts": {
@@ -46,7 +46,14 @@
     "test:characterization": "vitest run src/pages/order-detail.characterization src/pages/dashboard.characterization",
     "mutate": "node scripts/mutate.mjs",
     "perf:budget": "node scripts/budget.mjs",
-    "test:map": "node scripts/test-map.mjs"
+    "test:map": "node scripts/test-map.mjs",
+    "demo:tema17": "vitest run examples/tema17",
+    "demo:tema18": "vitest run examples/tema18",
+    "demo:tema19": "vitest run examples/tema19",
+    "test:integration": "vitest run src/orders/infrastructure/http-order-gateway.integration.test.ts",
+    "test:components": "vitest run src/orders/ui/components",
+    "test:frontera": "vitest run src/orders/infrastructure src/orders/testing",
+    "test:weak": "node scripts/weak-asserts.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.107.1",
@@ -62,6 +69,7 @@
     "@eslint/js": "^9.17.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.6.13",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
@@ -72,6 +80,7 @@
     "jsdom": "^25.0.1",
     "knip": "^5.41.1",
     "madge": "^8.0.0",
+    "msw": "^2.15.0",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1",
     "vite": "^6.0.5",

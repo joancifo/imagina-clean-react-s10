@@ -44,6 +44,17 @@ describe('Parte A · view model de la lista', () => {
       expect(ids({ onlyMine: true }, agent)).toEqual(['P-1003', 'P-1006']);
     });
 
+    // OMITIDO de partida · Ejercicio S8 · Parte A · CAMBIO DE COMPORTAMIENTO declarado.
+    // Antes: el criterio se aplicaba para todo el mundo y a un agente le dejaba la lista vacía, porque el
+    // BFF no le envía owner_id y la comparación nunca era cierta. Después: un criterio que no se puede
+    // aplicar se ignora, y la pantalla no lo ofrece (canFilterByOwner).
+    // Al activarlo, quita del test de arriba la expectativa del agente: ya no filtra.
+    it.skip('«solo míos» se ignora para quien no recibe el responsable, en vez de vaciar la lista', () => {
+      expect(ids({ onlyMine: true }, agent)).toEqual(ids({}, agent));
+      expect(build({ onlyMine: true }, agent).canFilterByOwner).toBe(false);
+      expect(build({ onlyMine: true }, manager).canFilterByOwner).toBe(true);
+    });
+
     it('los criterios se combinan', () => {
       expect(ids({ status: 'pending', onlyMine: true, text: 'a' })).toEqual(['P-1001', 'P-1005']);
     });

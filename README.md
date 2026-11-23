@@ -58,6 +58,13 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 | `npm run mutate -- <archivo>` | Mutation testing: ¿qué comportamiento ejecutan los tests sin comprobarlo? |
 | `npm run perf:budget` | JavaScript inicial (gzip) frente al presupuesto de `perf-budget.json` (antes: `npm run build`) |
 | `npm run test:map` | Tests, tiempo y `vi.mock` por capa |
+| `npm run demo:tema17` | Tests que comprueban frente a tests que ejecutan: nombres, tablas de transiciones e invariantes |
+| `npm run demo:tema18` | La escalera de consultas de RTL, `fireEvent` frente a `userEvent` y los cuatro estados |
+| `npm run demo:tema19` | Validar en la frontera, MSW en tres minutos y fixtures que no se pudren |
+| `npm run test:frontera` | Adapters y kit de pruebas de la feature |
+| `npm run test:components` | Los componentes presentacionales, probados como los usa una persona |
+| `npm run test:integration` | El adapter HTTP contra una red simulada: un caso por código de estado |
+| `npm run test:weak` | Aserciones que ejecutan sin comprobar, y `vi.mock` que el diseño ya no necesita |
 
 ## Material de la Sesión 1
 - `examples/tema1/` — ejemplos ejecutables del Tema 1
@@ -135,7 +142,21 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 - `prompts/sesion-7.md` — prompts de GitHub Copilot
 - `docs/ejercicio-s7.md` — ejercicio de la sesión
 
-Trabaja en una rama propia por sesión: `git checkout -b s7/<tu-nombre>`.
+## Material de la Sesión 8
+- `examples/tema17/` — el mismo comportamiento probado bien y mal, la tabla completa de transiciones e invariantes sobre datos generados
+- `examples/tema18/` — prioridad de consultas de RTL, el error que solo destapa `userEvent` y los cuatro estados de una pantalla
+- `examples/tema19/` — lo que cuesta un `as` sobre datos de fuera, MSW en tres minutos y fixtures que salen de una sola fuente
+- `src/orders/testing/` — el kit de pruebas de la feature: builders y madres con nombre de negocio, los cinco dobles, fixtures importadas de `server/store.mjs`, MSW, `renderOrders()` y `startBff()`
+- `src/orders/infrastructure/order-dto.ts` — `parseOrderDto`: lista blanca y comprobación de tipos en la frontera
+- `src/orders/infrastructure/order-mapper.test.ts` — qué hace el cliente cuando el backend envía algo que no esperaba
+- `src/orders/infrastructure/http-order-gateway.integration.test.ts` — un caso por código de estado, con red simulada
+- `src/orders/infrastructure/order-gateway.contract.test.ts` — el contrato, contra el fake y contra el BFF de verdad
+- `scripts/weak-asserts.mjs` — la lista de aserciones que no comprueban nada (`npm run test:weak`)
+- `docs/adr/006-estrategia-de-pruebas.md` — decisión de validación y niveles de prueba (proyecto final)
+- `prompts/sesion-8.md` — prompts de GitHub Copilot
+- `docs/ejercicio-s8.md` — ejercicio de la sesión
+
+Trabaja en una rama propia por sesión: `git checkout -b s8/<tu-nombre>`.
 
 ## Entorno
 `SESSION_SECRET` firma la cookie de sesión del BFF. En desarrollo hay un valor por defecto; en cualquier otro sitio, se pasa por variable de entorno. Nada que empiece por `VITE_` puede contener un secreto: viaja en el bundle.

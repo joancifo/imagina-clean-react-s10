@@ -94,6 +94,15 @@ describe('Parte C · la lista nueva, de extremo a extremo', () => {
       expect(screen.queryByRole('columnheader', { name: 'Total' })).toBeNull();
       expect(within(row).getAllByRole('button')).toHaveLength(1); // solo el enlace al detalle
     });
+
+    // OMITIDO de partida · Ejercicio S8 · Parte A. El BFF no le dice a un agente de quién es cada pedido:
+    // ofrecerle «Solo míos» es ofrecerle un filtro que siempre deja la lista vacía.
+    it.skip('un agente no ve el filtro «Solo míos»; el resto de filtros sí', async () => {
+      renderList({ actor: AGENT });
+      await rowOf('P-1');
+      expect(screen.queryByLabelText('Solo míos')).toBeNull();
+      expect(screen.getByLabelText('Estado')).toBeInTheDocument();
+    });
   });
 
   describe('cancelar desde la lista', () => {

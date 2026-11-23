@@ -51,3 +51,15 @@ Este repositorio es material de formación con code smells intencionados en el c
 - Antes de modificar código de `src/pages`, escribe o amplía sus tests de caracterización. Propón la migración en pasos: caracterizar → extraer funciones puras → versión nueva detrás de una abstracción → misma tabla de tests contra las dos → borrar la vieja.
 - Un cambio de comportamiento durante un refactor se declara en el test con `{ heredada, nueva }` y en el PR. Si no está declarado, es un error.
 - Para tests nuevos: valores exactos (`toBe`, `toEqual`), no `toBeDefined` ni `toBeGreaterThan(0)`. Comprueba los módulos críticos con `npm run mutate -- <archivo>`.
+
+## Sesión 8 · Pruebas: datos, pantalla y frontera
+- Todo lo que llega de fuera se valida en `infrastructure/order-dto.ts` (`parseOrderDto`) antes de traducirse al dominio. No generes `as` sobre una respuesta HTTP, un `localStorage` ni un parámetro de URL.
+- Lista blanca también aquí: el parser devuelve un objeto nuevo con los campos conocidos. Un campo nuevo del backend no rompe al cliente, pero tampoco entra solo.
+- Un campo que el backend puede no enviar se modela con `null` («no lo sé»), no con `undefined` ni con una cadena vacía. Si la interfaz no puede hacer algo sin ese dato, no lo ofrece.
+- Datos de prueba: `src/orders/testing` (builders, madres con nombre de negocio, dobles escritos a mano, fixtures importadas de `server/store.mjs`, `renderOrders`, `startBff`). No propongas fixtures copiadas ni `vi.mock` en código nuevo.
+- Tests de componente: React Testing Library con `userEvent`, consultas por rol y nombre accesible, y los mensajes de error atados a su campo (`aria-invalid` + `aria-describedby`). Nada de clases CSS, estructura del HTML ni snapshots completos.
+- Tests de adapter: MSW (`src/orders/testing/msw.ts`), con un caso por código de estado y uno por respuesta imposible (sin JSON, sin red, cuerpo con otra forma).
+- El contrato de un puerto se ejecuta contra el fake y contra `server/bff.mjs`, nunca contra `server/app.mjs`. Si un caso solo lo puede cumplir el adapter HTTP, va fuera del contrato compartido.
+- Si un fake acepta algo que el backend rechaza, el arreglo es el fake (y el dato compartido en `shared/policy.json`), no bajarle la exigencia al contrato.
+- Aserciones: valores exactos. `npm run test:weak` lista las débiles; `npm run mutate -- <archivo>` dice si los tests comprueban o solo ejecutan.
+

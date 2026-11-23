@@ -47,4 +47,14 @@
 - [ ] Ninguna optimización sin medición; `npm run perf:budget` antes: … kB · después: … kB.
 - [ ] Mutación del módulo crítico que toco: antes … % · después … %.
 
+## Pruebas: datos, pantalla y frontera (Sesión 8)
+- [ ] Ningún `as` sobre datos que llegan de fuera: se parsean en la frontera y el fallo se nota ahí.
+- [ ] Los campos que el backend puede no enviar están modelados como `null`, y la interfaz hace algo sensato cuando faltan.
+- [ ] Los datos de prueba salen de `src/orders/testing`; no he copiado fixtures ni he escrito pedidos a mano.
+- [ ] Los tests nuevos usan dobles escritos a mano; ningún `vi.mock` en código nuevo.
+- [ ] Los tests de componente consultan por rol o etiqueta y usan `userEvent`; los errores de formulario están atados a su campo.
+- [ ] El contrato del puerto se ejecuta contra `server/bff.mjs` y pasa en todas las implementaciones (`npm run test:contract`).
+- [ ] Aserciones con valores exactos. Mutación del módulo que toco: antes … % · después … %.
+- [ ] Cambios de comportamiento declarados aquí: …
+
 ## Cómo lo he comprobado
