@@ -1,0 +1,3 @@
+# Paso: npm run typecheck · job quality
+
+src/orders/ui/components/OrdersTable.tsx(39,95): error TS2339: Property 'status' does not exist on type 'OrderRowViewModel'.

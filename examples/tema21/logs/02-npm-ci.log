@@ -1,0 +1,11 @@
+# Paso: npm ci · job quality
+
+npm error code EUSAGE
+npm error
+npm error `npm ci` can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with `npm install` before continuing.
+npm error
+npm error Missing: date-fns@4.4.0 from lock file
+npm error
+npm error
+npm error (… ayuda de uso de npm ci, omitida …)
+npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2026-11-26T08_14_02_311Z-debug-0.log

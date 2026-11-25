@@ -63,3 +63,10 @@ Este repositorio es material de formación con code smells intencionados en el c
 - Si un fake acepta algo que el backend rechaza, el arreglo es el fake (y el dato compartido en `shared/policy.json`), no bajarle la exigencia al contrato.
 - Aserciones: valores exactos. `npm run test:weak` lista las débiles; `npm run mutate -- <archivo>` dice si los tests comprueban o solo ejecutan.
 
+## Sesión 9 · E2E, CI y revisión de código
+- E2E solo para journeys críticos (`e2e/`), con las fixtures de `e2e/fixtures.ts`, localizadores por rol acotados a su contexto y aserciones web-first. Nada de `waitForTimeout` ni CSS por posición. Detalle en `.github/instructions/e2e.instructions.md`.
+- El pipeline (`.github/workflows/ci.yml`) está especificado por `scripts/pipeline.test.mjs`. Nunca propongas silenciar un control (`continue-on-error`, `|| true`, `.skip`, más `retries`) para volver a verde.
+- Cambios en permisos, secretos, entornos o reglas de rama: explica y deja la decisión a una persona.
+- Al revisar un PR: comenta con Conventional Comments (`issue`, `suggestion`, `question`, `nitpick`, `praise`), indica si es bloqueante y cita `ruta:línea`. Prioriza límites de capa, datos de fuera sin parsear, secretos y datos personales, y tests que no comprueban. No comentes estilo que ya resuelven las herramientas. No apruebes: la decisión es de una persona.
+- Un cambio de arquitectura sin ADR en `docs/adr/` (formato en `docs/adr/README.md`) es un hallazgo de revisión.
+

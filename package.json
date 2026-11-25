@@ -1,7 +1,7 @@
 {
   "name": "orderdesk",
   "private": true,
-  "version": "0.16.0",
+  "version": "0.17.0",
   "type": "module",
   "description": "Backoffice de pedidos ficticio con code smells sembrados para el curso de Clean Architecture",
   "scripts": {
@@ -53,7 +53,12 @@
     "test:integration": "vitest run src/orders/infrastructure/http-order-gateway.integration.test.ts",
     "test:components": "vitest run src/orders/ui/components",
     "test:frontera": "vitest run src/orders/infrastructure src/orders/testing",
-    "test:weak": "node scripts/weak-asserts.mjs"
+    "test:weak": "node scripts/weak-asserts.mjs",
+    "test:e2e": "playwright test --project=e2e",
+    "test:e2e:smoke": "playwright test --project=e2e --grep @smoke",
+    "demo:tema20": "playwright test --project=demo",
+    "e2e:report": "playwright show-report",
+    "test:pipeline": "vitest run scripts/pipeline.test.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.107.1",
@@ -67,6 +72,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@playwright/test": "^1.65.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.6.13",
@@ -84,6 +90,7 @@
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1",
     "vite": "^6.0.5",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "yaml": "^2.9.1"
   }
 }

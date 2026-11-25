@@ -1,0 +1,129 @@
+diff --git a/.env b/.env
+index 3190bc4..deef6bd 100644
+--- a/.env
++++ b/.env
+@@ -2,3 +2,6 @@
+ VITE_API_URL=/api
+ VITE_ANALYTICS_KEY=ak_live_7f3c91b2d84e
+ SESSION_SECRET=solo-para-desarrollo
++
++# Clave del servicio de exportación
++VITE_EXPORT_API_KEY=exp_4f9a2c7d1e
+diff --git a/e2e/export.spec.ts b/e2e/export.spec.ts
+new file mode 100644
+index 0000000..4dad7f1
+--- /dev/null
++++ b/e2e/export.spec.ts
+@@ -0,0 +1,10 @@
++import { expect, test } from './fixtures';
++
++test('exportar', async ({ page, signIn }) => {
++  await signIn('Marta (admin)');
++  await page.waitForTimeout(2000);
++  const download = page.waitForEvent('download');
++  await page.locator('.page > button').first().click();
++  expect((await download).suggestedFilename()).toBe('pedidos.csv');
++  await expect(page.locator('table tr:nth-child(2)')).toBeVisible();
++});
+diff --git a/src/orders/ui/ExportButton.test.tsx b/src/orders/ui/ExportButton.test.tsx
+new file mode 100644
+index 0000000..056cda9
+--- /dev/null
++++ b/src/orders/ui/ExportButton.test.tsx
+@@ -0,0 +1,11 @@
++import { render, screen } from '@testing-library/react';
++import { ExportButton } from './ExportButton';
++
++vi.mock('./export-csv', () => ({ toCsv: () => 'csv' }));
++
++describe('ExportButton', () => {
++  it('funciona', () => {
++    render(<ExportButton role="admin" />);
++    expect(screen.getByText('Exportar CSV')).toBeTruthy();
++  });
++});
+diff --git a/src/orders/ui/ExportButton.tsx b/src/orders/ui/ExportButton.tsx
+new file mode 100644
+index 0000000..680bb31
+--- /dev/null
++++ b/src/orders/ui/ExportButton.tsx
+@@ -0,0 +1,25 @@
++import { useState } from 'react';
++import type { OrderDto } from '../infrastructure/order-dto';
++import { toCsv } from './export-csv';
++
++const API_KEY = import.meta.env.VITE_EXPORT_API_KEY;
++
++export function ExportButton({ role }: { role: string }) {
++  const [busy, setBusy] = useState(false);
++  if (role !== 'admin' && role !== 'manager') return null;
++
++  const exportCsv = async () => {
++    setBusy(true);
++    const res = await fetch(`/api/orders?key=${API_KEY}`, { credentials: 'include' });
++    const data = (await res.json()) as OrderDto[];
++    console.log('exportando', data.map((d) => d.cust_nm));
++    const csv = toCsv(data.map((d) => ({ id: d.ord_id, customer: d.cust_nm, status: d.ord_st })));
++    const link = document.createElement('a');
++    link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
++    link.download = 'pedidos.csv';
++    link.click();
++    setBusy(false);
++  };
++
++  return <button onClick={exportCsv} disabled={busy}>Exportar CSV</button>;
++}
+diff --git a/src/orders/ui/OrdersListPage.tsx b/src/orders/ui/OrdersListPage.tsx
+index 34ffc6b..5d8fd63 100644
+--- a/src/orders/ui/OrdersListPage.tsx
++++ b/src/orders/ui/OrdersListPage.tsx
+@@ -11,6 +11,7 @@ import type { Actor } from '../domain/cancellation';
+ import { EMPTY_APPROVAL_FORM, parseApprovalForm, type ApprovalFormErrors, type ApprovalFormInput } from './approval-form';
+ import { ApproveDialog } from './components/ApproveDialog';
+ import { CancelDialog } from './components/CancelDialog';
++import { ExportButton } from './ExportButton';
+ import { OrdersFilters } from './components/OrdersFilters';
+ import { OrdersTable } from './components/OrdersTable';
+ import { buildOrdersListViewModel } from './orders-list-view-model';
+@@ -90,6 +91,7 @@ export function OrdersListPage({ actor, onNotify }: Props) {
+   return (
+     <main className="page">
+       <h1>Pedidos</h1>
++      <ExportButton role={actor.role} />
+       <OrdersFilters criteria={criteria} canFilterByOwner={viewModel.canFilterByOwner} onChange={setCriteria} />
+       <label>
+         <input type="checkbox" checked={compact} onChange={(e) => setCompact(e.target.checked)} /> Compacto
+diff --git a/src/orders/ui/export-csv.test.ts b/src/orders/ui/export-csv.test.ts
+new file mode 100644
+index 0000000..511ca43
+--- /dev/null
++++ b/src/orders/ui/export-csv.test.ts
+@@ -0,0 +1,13 @@
++import { toCsv } from './export-csv';
++
++describe('toCsv', () => {
++  it('escapa el separador y las comillas para que una celda no se parta en dos', () => {
++    expect(toCsv([{ id: 'P-1', customer: 'Talleres "Norte"; S.L.', status: 'Pendiente' }])).toBe(
++      'Pedido;Cliente;Estado\nP-1;"Talleres ""Norte""; S.L.";Pendiente',
++    );
++  });
++
++  it('sin filas, solo la cabecera', () => {
++    expect(toCsv([])).toBe('Pedido;Cliente;Estado');
++  });
++});
+diff --git a/src/orders/ui/export-csv.ts b/src/orders/ui/export-csv.ts
+new file mode 100644
+index 0000000..29e3bfc
+--- /dev/null
++++ b/src/orders/ui/export-csv.ts
+@@ -0,0 +1,9 @@
++// PRESENTACIÓN · Convierte filas en CSV. Función pura: sin React, sin red, sin fechas del sistema.
++export type CsvRow = { id: string; customer: string; status: string };
++
++const escape = (value: string): string => (/[",\n;]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value);
++
++export function toCsv(rows: CsvRow[]): string {
++  const header = 'Pedido;Cliente;Estado';
++  return [header, ...rows.map((row) => [row.id, row.customer, row.status].map(escape).join(';'))].join('\n');
++}

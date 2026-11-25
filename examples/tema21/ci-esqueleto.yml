@@ -1,0 +1,58 @@
+# Ejercicio S9 · Parte B · Esqueleto del pipeline nuevo.
+# 1. Cópialo encima del heredado:  cp examples/tema21/ci-esqueleto.yml .github/workflows/ci.yml
+# 2. Rellena los cinco HUECOS. Comprobación: npm run test:pipeline
+# Referencias: https://docs.github.com/actions/reference/security/secure-use · https://playwright.dev/docs/ci-intro
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# HUECO 1 · Mínimo privilegio: el token del workflow solo puede LEER el contenido del repositorio.
+
+# Un push nuevo a la misma rama cancela la ejecución anterior de un PR (en main, se terminan todas).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  quality:
+    name: Calidad · arquitectura, tipos, tests y build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Contexto del PR
+        if: github.event_name == 'pull_request'
+        # HUECO 2 · El título lo escribe quien abre el PR. Pásalo por `env:` (PR_TITLE) y usa $PR_TITLE en `run:`.
+      - run: npm ci
+      # HUECO 3 · Los siete controles, UN paso por control y en este orden:
+      #           lint:arch · lint:boundaries · typecheck · test · audit:secrets · build · perf:budget
+
+  e2e:
+    name: E2E · journeys críticos con Playwright
+    # HUECO 4a · Este job solo arranca si `quality` ha terminado en verde.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # HUECO 4b · Instala SOLO Chromium, con las dependencias del sistema que necesita.
+      - run: npm run test:e2e
+      # Si los E2E fallan, el informe (con trazas) es lo único que permite saber por qué.
+      - uses: actions/upload-artifact@v5
+        # HUECO 5 · Que se suba aunque los tests fallen, pero no si alguien cancela la ejecución.
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

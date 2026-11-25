@@ -76,8 +76,8 @@ function isValidEntry(entry) {
 /** Destino por defecto de la telemetría: una línea JSON por entrada en la salida estándar (lo recoge la plataforma). */
 const stdoutTelemetry = (line) => console.log(JSON.stringify(line));
 
-export function createBff({ seed, secret = sessionSecret(), now = () => new Date(), telemetrySink = stdoutTelemetry } = {}) {
-  const store = createStore(seed);
+export function createBff({ seed, secret = sessionSecret(), now = () => new Date(), telemetrySink = stdoutTelemetry, testing = false } = {}) {
+  let store = createStore(seed); // `let`: solo el reinicio de los E2E (Sesión 9) lo sustituye
   const app = express();
   app.use(express.json({ limit: '32kb' }));
 
@@ -150,6 +150,16 @@ export function createBff({ seed, secret = sessionSecret(), now = () => new Date
     for (const entry of entries) telemetrySink({ ...entry, fields: entry.fields ?? {}, actor: req.actor.id, receivedAt });
     return res.status(204).end();
   });
+
+  // Sesión 9 · Solo para los E2E (server/e2e.mjs): volver a los datos de partida antes de CADA test.
+  // Sin esto, el orden de los tests decide el resultado: el que cancela P-1005 rompe al que lo aprueba.
+  // Apagado por defecto: server/index.mjs no lo enciende y server/bff.test.mjs comprueba que no existe.
+  if (testing) {
+    app.post('/api/testing/reset', (_req, res) => {
+      store = createStore(seed);
+      res.status(204).end();
+    });
+  }
 
   app.use((_req, res) => fail(res, 404, 'not-found'));
   return app;

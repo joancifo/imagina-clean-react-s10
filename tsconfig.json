@@ -4,5 +4,5 @@
     "moduleResolution": "bundler", "jsx": "react-jsx", "strict": true, "skipLibCheck": true,
     "noEmit": true, "resolveJsonModule": true, "isolatedModules": true, "types": ["vitest/globals", "@testing-library/jest-dom", "vite/client"]
   },
-  "include": ["src", "examples", "shared"]
+  "include": ["src", "examples", "shared", "e2e", "playwright.config.ts"]
 }

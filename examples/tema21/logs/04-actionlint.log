@@ -1,0 +1,6 @@
+# Paso: actionlint .github/workflows/ci.yml (revisión local del pipeline heredado)
+
+.github/workflows/ci.yml:16:34: "github.event.pull_request.title" is potentially untrusted. avoid using it directly in inline scripts. instead, pass it through an environment variable. see https://docs.github.com/en/actions/reference/security/secure-use#good-practices-for-mitigating-script-injection-attacks for more details [expression]
+   |
+16 |         run: echo "Revisando ${{ github.event.pull_request.title }}"
+   |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

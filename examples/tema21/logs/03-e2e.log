@@ -1,0 +1,60 @@
+# Paso: npm run test:e2e · job e2e (retries: 2 en CI; aquí se muestran el intento y el primer reintento)
+
+Running 1 test using 1 worker
+
+  ✘  1 [e2e] › e2e/cancel-order.spec.ts:4:3 › Cancelar un pedido › un manager cancela un pedido pendiente (568ms)
+  ✘  2 [e2e] › e2e/cancel-order.spec.ts:4:3 › Cancelar un pedido › un manager cancela un pedido pendiente (retry #1) (604ms)
+
+
+  1) [e2e] › e2e/cancel-order.spec.ts:4:3 › Cancelar un pedido › un manager cancela un pedido pendiente 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Cancelar' }) resolved to 2 elements:
+        1) <button>Cancelar</button> aka getByRole('button', { name: 'Cancelar' }).first()
+        2) <button>Cancelar</button> aka getByRole('button', { name: 'Cancelar' }).nth(1)
+
+    Call log:
+      - waiting for getByRole('button', { name: 'Cancelar' })
+
+
+      4 |   test('un manager cancela un pedido pendiente', async ({ page, signIn }) => {
+      5 |     await signIn('Pau (manager)');
+    > 6 |     await page.getByRole('button', { name: 'Cancelar' }).click();
+        |                                                          ^
+      7 |     await page.getByRole('textbox', { name: 'Motivo' }).fill('Cliente duplicado en el ERP');
+      8 |     await page.getByRole('button', { name: 'Confirmar' }).click();
+      9 |     await expect(page.getByRole('status')).toHaveText('Pedido cancelado');
+        at /home/runner/work/orderdesk/orderdesk/e2e/cancel-order.spec.ts:6:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/cancel-order-Cancelar-un-ped-dcb6d-cancela-un-pedido-pendiente-e2e/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/cancel-order-Cancelar-un-ped-dcb6d-cancela-un-pedido-pendiente-e2e/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Cancelar' }) resolved to 2 elements:
+        1) <button>Cancelar</button> aka getByRole('button', { name: 'Cancelar' }).first()
+        2) <button>Cancelar</button> aka getByRole('button', { name: 'Cancelar' }).nth(1)
+
+    Call log:
+      - waiting for getByRole('button', { name: 'Cancelar' })
+
+
+      4 |   test('un manager cancela un pedido pendiente', async ({ page, signIn }) => {
+      5 |     await signIn('Pau (manager)');
+    > 6 |     await page.getByRole('button', { name: 'Cancelar' }).click();
+        |                                                          ^
+      7 |     await page.getByRole('textbox', { name: 'Motivo' }).fill('Cliente duplicado en el ERP');
+      8 |     await page.getByRole('button', { name: 'Confirmar' }).click();
+      9 |     await expect(page.getByRole('status')).toHaveText('Pedido cancelado');
+        at /home/runner/work/orderdesk/orderdesk/e2e/cancel-order.spec.ts:6:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/cancel-order-Cancelar-un-ped-dcb6d-cancela-un-pedido-pendiente-e2e-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/cancel-order-Cancelar-un-ped-dcb6d-cancela-un-pedido-pendiente-e2e-retry1/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/cancel-order-Cancelar-un-ped-dcb6d-cancela-un-pedido-pendiente-e2e-retry1/trace.zip

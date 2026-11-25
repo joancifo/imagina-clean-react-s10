@@ -157,3 +157,40 @@ describe('Parte A · entrada y salida', () => {
       expect((await call('/logs', { method: 'POST', cookie, body: { level: 'info', name: 'order_cancelled', payload: { id: 'P-1001', customerName: 'Talleres Norte' } } })).status).toBe(422);
     }));
 });
+
+// Sesión 9 · El reinicio de datos existe SOLO para los E2E. Un endpoint que borra el estado no puede llegar a producción.
+describe('reinicio de datos para los E2E', () => {
+  const withTestingBff = async (run, options) => {
+    const server = createBff({ secret: SECRET, ...options }).listen(0, '127.0.0.1');
+    await new Promise((resolve) => server.once('listening', resolve));
+    const base = `http://127.0.0.1:${server.address().port}/api`;
+    try {
+      return await run(base);
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+    }
+  };
+  const cookieFor = async (base, userId) =>
+    (await fetch(`${base}/session`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ userId }) })).headers.get('set-cookie').split(';')[0];
+
+  it('no existe si no se pide: el BFF de producción responde 404', async () => {
+    await withTestingBff(async (base) => {
+      const response = await fetch(`${base}/testing/reset`, { method: 'POST' });
+      expect(response.status).toBe(404);
+    });
+  });
+
+  it('con testing: true, devuelve los pedidos a su estado de partida', async () => {
+    await withTestingBff(async (base) => {
+      const cookie = await cookieFor(base, 'u1');
+      const cancel = await fetch(`${base}/orders/P-1005/cancel`, { method: 'POST', headers: { cookie, 'content-type': 'application/json' }, body: JSON.stringify({ reason: 'Prueba E2E' }) });
+      expect(cancel.status).toBe(200);
+
+      const reset = await fetch(`${base}/testing/reset`, { method: 'POST' });
+      expect(reset.status).toBe(204);
+
+      const order = await (await fetch(`${base}/orders/P-1005`, { headers: { cookie } })).json();
+      expect(order.ord_st).toBe('pending');
+    }, { testing: true });
+  });
+});

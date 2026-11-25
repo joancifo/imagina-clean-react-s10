@@ -1,0 +1,22 @@
+# Pipeline heredado de OrderDesk. Está en verde desde hace meses… y eso es parte del problema.
+# Sesión 9 · Tema 21: léelo con la tabla «Lo que el verde esconde» antes de cambiar una línea.
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Contexto
+        run: echo "Revisando ${{ github.event.pull_request.title }}"
+      - run: npm install
+      - run: npm run lint:arch
+        continue-on-error: true
+      - run: npm run typecheck
+      - run: npm test || true
+      - run: npm run build

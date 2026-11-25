@@ -7,7 +7,8 @@ Curso **Clean Architecture para Frontend con React y Node — SOLID, Code Smells
 OrderDesk es un backoffice de pedidos B2B: listado, detalle, aprobación, cancelación y panel. **Funciona, y ese es el problema:** su estructura hace que cada cambio sea caro y arriesgado.
 
 ## Requisitos
-- Node.js LTS y npm · Git · Visual Studio Code con la extensión de GitHub Copilot
+- Node.js 24 (`.nvmrc`) y npm · Git · Visual Studio Code con la extensión de GitHub Copilot
+- Para los E2E: `npx playwright install chromium` (una vez)
 
 ## Arranque
 ```bash
@@ -65,6 +66,11 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 | `npm run test:components` | Los componentes presentacionales, probados como los usa una persona |
 | `npm run test:integration` | El adapter HTTP contra una red simulada: un caso por código de estado |
 | `npm run test:weak` | Aserciones que ejecutan sin comprobar, y `vi.mock` que el diseño ya no necesita |
+| `npm run test:e2e` | Journeys críticos con Playwright: arranca su propio BFF (3101) y la web (5174) |
+| `npm run test:e2e:smoke` | Solo los E2E etiquetados `@smoke`: el de después de cada despliegue |
+| `npm run demo:tema20` | Localizadores, esperas y red en un navegador real |
+| `npm run e2e:report` | Abre el último informe de Playwright (con trazas de los fallos) |
+| `npm run test:pipeline` | El workflow de CI como especificación: lo que se puede leer en `.github/workflows/ci.yml` |
 
 ## Material de la Sesión 1
 - `examples/tema1/` — ejemplos ejecutables del Tema 1
@@ -156,7 +162,21 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 - `prompts/sesion-8.md` — prompts de GitHub Copilot
 - `docs/ejercicio-s8.md` — ejercicio de la sesión
 
-Trabaja en una rama propia por sesión: `git checkout -b s8/<tu-nombre>`.
+## Material de la Sesión 9
+- `e2e/` y `playwright.config.ts` — journeys críticos con Playwright, fixtures (`resetData`, `signIn`, `backstage`) y `rowOf`
+- `server/e2e.mjs` — el BFF de los E2E, con reinicio de datos que nunca llega a producción
+- `examples/tema20/` — localizadores que sobreviven a un cambio, esperas web-first y red controlada
+- `examples/tema21/` — el pipeline heredado, cinco logs de fallos reales para diagnosticar y las comprobaciones deterministas
+- `.github/workflows/ci.yml` y `scripts/pipeline.test.mjs` — el pipeline y su especificación
+- `.github/skills/` — skills de Copilot: `/diagnosticar-fallo-ci` y `/revisar-pr`
+- `.github/instructions/ci.instructions.md` y `e2e.instructions.md` — instrucciones de Copilot por ruta
+- `examples/tema22/` — el PR #142, para revisarlo en tres capas
+- `docs/adr/README.md`, `docs/revision-de-codigo.md` y `docs/onboarding.md` — cómo se decide, cómo se revisa y por dónde se empieza
+- `docs/adr/007-e2e-y-ci.md` — decisión de E2E y pipeline (proyecto final)
+- `prompts/sesion-9.md` — prompts de GitHub Copilot
+- `docs/ejercicio-s9.md` — ejercicio de la sesión
+
+Trabaja en una rama propia por sesión: `git checkout -b s9/<tu-nombre>`.
 
 ## Entorno
 `SESSION_SECRET` firma la cookie de sesión del BFF. En desarrollo hay un valor por defecto; en cualquier otro sitio, se pasa por variable de entorno. Nada que empiece por `VITE_` puede contener un secreto: viaja en el bundle.

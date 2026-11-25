@@ -1,0 +1,8 @@
+# Paso: npm run perf:budget · job quality (después de npm run build)
+
+Chunk                                       Tamaño    gzip   Carga
+assets/index-Cdv71Pns.js                     264.1 kB   85.9 kB   inicial
+assets/OrderDetailPage-Ck3PxLEU.js            61.2 kB   23.2 kB   bajo demanda
+
+JavaScript inicial (gzip): 85.9 kB · presupuesto 70 kB · FUERA
+Pistas: ¿qué dependencias pesadas arrastra la primera pantalla? ¿Hay pantallas que se podrían cargar con import()?
