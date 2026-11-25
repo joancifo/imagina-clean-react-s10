@@ -1,22 +1,67 @@
-# Pipeline heredado de OrderDesk. Está en verde desde hace meses… y eso es parte del problema.
-# Sesión 9 · Tema 21: léelo con la tabla «Lo que el verde esconde» antes de cambiar una línea.
+# Sesión 9 · Tema 21 · Pipeline de OrderDesk.
+# Cada bloque responde a un hallazgo de examples/tema21/ci-heredado.yml. Comprobación: npm run test:pipeline.
+# Referencias: https://docs.github.com/actions/reference/security/secure-use · https://playwright.dev/docs/ci-intro
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Mínimo privilegio: el token del workflow solo puede LEER el repositorio.
+permissions:
+  contents: read
+
+# Un push nuevo a la misma rama cancela la ejecución anterior de un PR (en main, se terminan todas).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  build:
+  quality:
+    name: Calidad · arquitectura, tipos, tests y build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
-      - name: Contexto
-        run: echo "Revisando ${{ github.event.pull_request.title }}"
-      - run: npm install
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Contexto del PR
+        if: github.event_name == 'pull_request'
+        # El título lo escribe quien abre el PR: entra como variable de entorno, nunca pegado en el script.
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: echo "Revisando $PR_TITLE"
+      - run: npm ci
       - run: npm run lint:arch
-        continue-on-error: true
+      - run: npm run lint:boundaries
       - run: npm run typecheck
-      - run: npm test || true
+      - run: npm test
+      - run: npm run audit:secrets
       - run: npm run build
+      - run: npm run perf:budget
+
+  e2e:
+    name: E2E · journeys críticos con Playwright
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      # Si los E2E fallan, el informe (con trazas) es lo único que permite saber por qué.
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

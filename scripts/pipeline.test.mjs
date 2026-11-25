@@ -12,7 +12,7 @@ const commandsOf = (job) => stepsOf(job).map((step) => step.run ?? '').join('\n'
 const allSteps = Object.values(jobs).flatMap((job) => job.steps ?? []);
 const usesOf = (job, action) => stepsOf(job).find((step) => (step.uses ?? '').startsWith(`${action}@`));
 
-describe.skip('cuándo se ejecuta', () => {
+describe('cuándo se ejecuta', () => {
   it('en cada pull request a main y en cada push a main, y en nada más', () => {
     expect(workflow.on).toEqual({ pull_request: { branches: ['main'] }, push: { branches: ['main'] } });
   });
@@ -23,7 +23,7 @@ describe.skip('cuándo se ejecuta', () => {
   });
 });
 
-describe.skip('qué puede hacer', () => {
+describe('qué puede hacer', () => {
   it('el token del workflow solo puede leer el repositorio', () => {
     expect(workflow.permissions).toEqual({ contents: 'read' });
   });
@@ -45,7 +45,7 @@ describe.skip('qué puede hacer', () => {
   });
 });
 
-describe.skip('calidad', () => {
+describe('calidad', () => {
   it('instala exactamente el lockfile, con la versión de Node del repositorio y la caché de npm', () => {
     expect(commandsOf('quality')).toMatch(/^npm ci$/m);
     expect(commandsOf('quality')).not.toMatch(/npm install/);
@@ -64,7 +64,7 @@ describe.skip('calidad', () => {
   });
 });
 
-describe.skip('E2E', () => {
+describe('E2E', () => {
   it('esperan a que calidad esté en verde e instalan solo Chromium, con sus dependencias', () => {
     expect(jobs.e2e?.needs).toBe('quality');
     expect(commandsOf('e2e')).toMatch(/^npx playwright install --with-deps chromium$/m);
