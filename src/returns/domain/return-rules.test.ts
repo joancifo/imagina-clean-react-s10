@@ -1,9 +1,9 @@
 // @vitest-environment node
-// Sesión 10 · Laboratorio · Fase 4 · La especificación del primer paso: los MISMOS números que fijó la caracterización.
-// Quita los .skip de uno en uno, a medida que rellenas cada HUECO de return-rules.ts: npm run lab:rules
+// Sesión 10 · Tests unitarios de las reglas de devoluciones. Mismos números que la caracterización
+// (src/pages/returns.characterization.test.tsx), pero sin pantalla, sin red y sin reloj: milisegundos.
 import { canManageReturns, chargesRestocking, isWithinReturnWindow, needsAdminApproval, refundFor, remainingQuantity } from './return-rules';
 
-describe.skip('refundFor · importe a devolver', () => {
+describe('refundFor · importe a devolver', () => {
   it.each([
     // tier        motivo               uds  precio  importe   por qué
     ['standard', 'NO_LONGER_NEEDED', 1, 140, 148.4], //  169,40 con IVA − 21,00 de reposición
@@ -21,7 +21,7 @@ describe.skip('refundFor · importe a devolver', () => {
   });
 });
 
-describe.skip('chargesRestocking · gastos de reposición', () => {
+describe('chargesRestocking · gastos de reposición', () => {
   it.each([
     ['standard', 'NO_LONGER_NEEDED', true],
     ['standard', 'DEFECTIVE', false],
@@ -34,7 +34,7 @@ describe.skip('chargesRestocking · gastos de reposición', () => {
   });
 });
 
-describe.skip('isWithinReturnWindow · 30 × 24 horas desde la entrega', () => {
+describe('isWithinReturnWindow · 30 × 24 horas desde la entrega', () => {
   const delivered = '2026-11-12T10:00:00Z';
   it.each([
     ['2026-11-30T17:00:00Z', true], //  el día de clase: 18 días
@@ -46,14 +46,14 @@ describe.skip('isWithinReturnWindow · 30 × 24 horas desde la entrega', () => {
   });
 });
 
-describe.skip('remainingQuantity · lo que queda por devolver', () => {
+describe('remainingQuantity · lo que queda por devolver', () => {
   it('pedidas menos ya devueltas', () => expect(remainingQuantity(3, [1])).toBe(2));
   it('sin devoluciones previas, todas', () => expect(remainingQuantity(3, [])).toBe(3));
   it('varias devoluciones previas se suman', () => expect(remainingQuantity(10, [2, 3])).toBe(5));
   it('todo devuelto: cero', () => expect(remainingQuantity(3, [1, 2])).toBe(0));
 });
 
-describe.skip('quién gestiona devoluciones', () => {
+describe('quién gestiona devoluciones', () => {
   it.each([
     ['manager', 500, false],
     ['manager', 500.01, true],

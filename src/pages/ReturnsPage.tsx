@@ -2,8 +2,10 @@
 // Se escribió «para salir del paso» y desde entonces cada cambio ha añadido un if.
 // Sesión 10 · Es el código del laboratorio. NO lo arregles a ojo: primero el mapa, después la red
 // (tests de caracterización), después el plan. Ver docs/ejercicio-s10.md.
+// Paso 2 del plan (solucion-s10): las reglas ya viven en src/returns/domain; aquí solo se llaman.
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { canManageReturns, chargesRestocking, isWithinReturnWindow, needsAdminApproval, refundFor, remainingQuantity, type ReturnReason } from '../returns';
 import { formatCurrency, formatDate } from '../shared/utils';
 import { useAppStore } from '../store/appStore';
 import type { AnyProps } from '../shared/types';
@@ -45,17 +47,13 @@ export default function ReturnsPage() {
     if (!order) return;
     const line = order.ln_items.find((l: AnyProps) => l.sku === sku);
     if (!line) return;
-    const base = qty * line.unit_prc;
-    const pct = order.cust_tier === 'gold' ? 0.1 : order.cust_tier === 'silver' ? 0.05 : 0;
-    let amount = base * (1 - pct) * 1.21;
-    // gastos de reposición (pedido de Dirección, 2024)
-    if (reason !== 'DEFECTIVE' && order.cust_tier !== 'gold') amount = amount - base * 0.15;
-    setRefund(Math.round(amount * 100) / 100);
+    // Paso 2 · La regla vive en src/returns/domain. `reason` sale de un <select> con tres valores fijos: no llega de fuera.
+    setRefund(refundFor({ unitPrice: line.unit_prc, quantity: qty, tier: order.cust_tier, reason: reason as ReturnReason }));
   }, [order, sku, qty, reason]);
 
   if (!order || !shipment || !me) return <main className="page">Cargando…</main>;
 
-  if (me.usr_role === 'agent') {
+  if (!canManageReturns(me.usr_role)) {
     return (
       <main className="page">
         <p>No tienes permiso para gestionar devoluciones.</p>
@@ -72,8 +70,7 @@ export default function ReturnsPage() {
     );
   }
 
-  const days = (Date.now() - new Date(shipment.dlv_ts).getTime()) / 86400000;
-  if (days > 30) {
+  if (!isWithinReturnWindow(shipment.dlv_ts, new Date())) {
     return (
       <main className="page">
         <h1>Devolución del pedido {order.ord_id}</h1>
@@ -83,9 +80,10 @@ export default function ReturnsPage() {
   }
 
   const line = order.ln_items.find((l: AnyProps) => l.sku === sku);
-  const returned = previous.filter((r) => r.sku === sku).reduce((acc, r) => acc + r.qty, 0);
-  const max = line ? line.qty - returned : 0;
-  const needsAdmin = me.usr_role === 'manager' && refund > 500;
+  const returnedQuantities = previous.filter((r) => r.sku === sku).map((r) => r.qty as number);
+  const returned = returnedQuantities.reduce((acc, quantity) => acc + quantity, 0);
+  const max = line ? remainingQuantity(line.qty, returnedQuantities) : 0;
+  const needsAdmin = needsAdminApproval(me.usr_role, refund);
 
   const submit = async () => {
     if (qty < 1 || qty > max) {
@@ -142,7 +140,7 @@ export default function ReturnsPage() {
       <p>
         <strong>Reembolso: {formatCurrency(refund)}</strong>
       </p>
-      {reason !== 'DEFECTIVE' && order.cust_tier !== 'gold' && <p className="note">Incluye gastos de reposición del 15 %</p>}
+      {chargesRestocking(order.cust_tier, reason as ReturnReason) && <p className="note">Incluye gastos de reposición del 15 %</p>}
       {needsAdmin && <p className="error">Requiere aprobación de un administrador</p>}
       {error && <p className="error">{error}</p>}
       <button disabled={sending || needsAdmin || max === 0} onClick={submit}>

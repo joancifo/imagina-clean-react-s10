@@ -1,48 +1,47 @@
-// Sesión 10 · Laboratorio · Fase 4 · ESQUELETO del primer paso del plan: las reglas de Devoluciones, como funciones PURAS.
-// Hoy viven dentro de src/pages/ReturnsPage.tsx, mezcladas con fetch, estado y JSX. Aquí no entra nada de eso:
-// sin React, sin fetch y sin Date.now() (la fecha llega por parámetro).
-//
-// Regla de oro de este paso: se copian TAL CUAL, rarezas incluidas. Un refactor no cambia comportamiento.
-// Si una regla te parece un error, no la arregles: apúntala como pregunta en docs/devoluciones/plan.md.
-// Comprobación: quita el .skip de return-rules.test.ts → npm run lab:rules · después, npm run lab:red (la caracterización).
+// DOMINIO · Reglas de las devoluciones, extraídas de src/pages/ReturnsPage.tsx (Sesión 10 · paso 2 del plan).
+// Funciones PURAS: sin React, sin fetch y sin Date.now(). La fecha llega por parámetro.
+// Se extrajeron TAL CUAL, rarezas incluidas: un refactor no cambia comportamiento. Las rarezas están en
+// docs/devoluciones/plan.md como preguntas a Producto; si se decide cambiar alguna, será otro PR, con su test.
 import policy from '../../../shared/policy.json';
 
 export type ReturnReason = 'NO_LONGER_NEEDED' | 'DEFECTIVE' | 'WRONG_ITEM';
+export const RETURN_REASONS: ReadonlyArray<ReturnReason> = ['NO_LONGER_NEEDED', 'DEFECTIVE', 'WRONG_ITEM'];
 
-const DISCOUNT_BY_TIER: Record<string, number> = policy.pricing.discountByTier; // gold 0.1 · silver 0.05 · standard 0
-const VAT = policy.pricing.vat; // 0.21
-const WINDOW_DAYS = 30; // Paso 3 del plan: a shared/policy.json, para que el BFF use el mismo número
-const RESTOCKING_FEE = 0.15;
-const MANAGER_REFUND_LIMIT = 500;
+const DISCOUNT_BY_TIER: Record<string, number> = policy.pricing.discountByTier;
+const VAT = policy.pricing.vat;
+const { windowDays, restockingFee, managerRefundLimit } = policy.returns;
 const HOUR = 3_600_000;
 
-/** HUECO 1 · ¿Paga gastos de reposición? Busca la condición en ReturnsPage.tsx (aparece DOS veces: en el efecto y en el JSX). */
+/** ¿Paga gastos de reposición? Todo lo que no es «defectuoso», salvo gold.
+ *  RAREZA (plan.md, pregunta 1): «artículo equivocado» también paga, aunque el error sea nuestro. */
 export function chargesRestocking(tier: string, reason: ReturnReason): boolean {
-  throw new Error('Fase 4 · HUECO 1 sin hacer');
+  return reason !== 'DEFECTIVE' && tier !== 'gold';
 }
 
 export type RefundInput = { unitPrice: number; quantity: number; tier: string; reason: ReturnReason };
 
-/** HUECO 2 · Importe a devolver, redondeado a céntimos. Es el segundo useEffect de ReturnsPage.tsx.
- *  Usa DISCOUNT_BY_TIER, VAT, RESTOCKING_FEE y chargesRestocking(). */
+/** Importe a devolver, redondeado a céntimos: precio con descuento e IVA, menos la reposición.
+ *  RAREZA (plan.md, pregunta 2): la reposición se calcula sobre el precio SIN descuento ni IVA. */
 export function refundFor({ unitPrice, quantity, tier, reason }: RefundInput): number {
-  throw new Error('Fase 4 · HUECO 2 sin hacer');
+  const base = quantity * unitPrice;
+  let amount = base * (1 - (DISCOUNT_BY_TIER[tier] ?? 0)) * (1 + VAT);
+  if (chargesRestocking(tier, reason)) amount -= base * restockingFee;
+  return Math.round(amount * 100) / 100;
 }
 
-/** HUECO 3 · ¿Dentro de plazo? En la pantalla: `days > 30` con `Date.now()`. Aquí, `now` llega por parámetro. */
+/** ¿Está dentro de plazo? RAREZA (plan.md, pregunta 3): «30 días» son 30 × 24 horas desde la HORA de entrega. */
 export function isWithinReturnWindow(deliveredAt: string, now: Date): boolean {
-  throw new Error('Fase 4 · HUECO 3 sin hacer');
+  return (now.getTime() - new Date(deliveredAt).getTime()) / HOUR <= windowDays * 24;
 }
 
-/** HUECO 4 · Unidades que aún se pueden devolver de una línea: pedidas menos ya devueltas. */
+/** Unidades que aún se pueden devolver de una línea: pedidas menos ya devueltas. */
 export function remainingQuantity(ordered: number, alreadyReturned: ReadonlyArray<number>): number {
-  throw new Error('Fase 4 · HUECO 4 sin hacer');
+  return ordered - alreadyReturned.reduce((sum, quantity) => sum + quantity, 0);
 }
 
-/** HUECO 5 (si te sobra tiempo) · ¿Necesita un admin? En la pantalla: `needsAdmin`. */
+/** Un manager no registra reembolsos de más de 500 €: hace falta un admin. Un agente no gestiona devoluciones. */
 export function needsAdminApproval(role: string, amount: number): boolean {
-  throw new Error('Fase 4 · HUECO 5 sin hacer');
+  return role === 'manager' && amount > managerRefundLimit;
 }
 
-/** Ya hecho: el modelo. Así de pequeña es una regla pura con nombre de negocio. */
 export const canManageReturns = (role: string): boolean => role === 'admin' || role === 'manager';

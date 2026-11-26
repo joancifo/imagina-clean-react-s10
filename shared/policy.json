@@ -4,5 +4,6 @@
   "approval": { "adminFrom": 10000 },
   "cancellation": { "managerLimit": 5000, "reasonMaxLength": 140 },
   "urgency": { "from": 3000 },
-  "session": { "ttlMinutes": 60, "cookieName": "od_session" }
+  "session": { "ttlMinutes": 60, "cookieName": "od_session" },
+  "returns": { "windowDays": 30, "restockingFee": 0.15, "managerRefundLimit": 500 }
 }
