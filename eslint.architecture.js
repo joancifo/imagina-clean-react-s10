@@ -1,4 +1,5 @@
-// REGLAS DE ARQUITECTURA · Protegen la regla de dependencia en src/orders (código nuevo).
+// REGLAS DE ARQUITECTURA · Protegen la regla de dependencia en src/orders y src/returns (código nuevo).
+// Sesión 10 · Devoluciones (src/returns) nace con las mismas reglas de capa que Pedidos.
 // El código heredado (src/pages, src/services…) se migra poco a poco; estas reglas no lo bloquean.
 // Documentación: https://eslint.org/docs/latest/rules/no-restricted-imports
 import tseslint from 'typescript-eslint';
@@ -22,11 +23,11 @@ const composition = { group: ['**/composition'], message: 'Solo la presentación
 const observability = { group: ['**/observability', '**/observability/**'], message: 'Dominio y aplicación no registran logs: la medición se añade en la composición (traced, observePublisher).' };
 
 export default tseslint.config(
-  { files: ['src/orders/**/*.{ts,tsx}'], languageOptions: { parser: tseslint.parser } },
+  { files: ['src/{orders,returns}/**/*.{ts,tsx}'], languageOptions: { parser: tseslint.parser } },
 
   // DOMINIO: no importa nada de otras capas ni de frameworks, ni usa globales del navegador.
   {
-    files: ['src/orders/domain/**/*.{ts,tsx}'],
+    files: ['src/{orders,returns}/domain/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': ['error', { patterns: [FRAMEWORKS, layer('application'), layer('infrastructure'), layer('ui'), composition, observability] }],
       'no-restricted-globals': ['error', ...BROWSER_GLOBALS],
@@ -36,7 +37,7 @@ export default tseslint.config(
 
   // APLICACIÓN: solo dominio y sus propios puertos.
   {
-    files: ['src/orders/application/**/*.{ts,tsx}'],
+    files: ['src/{orders,returns}/application/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': ['error', { patterns: [FRAMEWORKS, layer('infrastructure'), layer('ui'), composition, observability] }],
       'no-restricted-globals': ['error', ...BROWSER_GLOBALS],
@@ -46,7 +47,7 @@ export default tseslint.config(
 
   // INFRAESTRUCTURA: implementa puertos; nunca conoce la presentación.
   {
-    files: ['src/orders/infrastructure/**/*.{ts,tsx}'],
+    files: ['src/{orders,returns}/infrastructure/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': ['error', { patterns: [layer('ui'), composition] }],
     },

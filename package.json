@@ -18,7 +18,7 @@
     "deps": "knip --dependencies --no-exit-code",
     "demo:tema3": "vitest run examples/tema3",
     "demo:tema4": "vitest run examples/tema4 src/orders",
-    "lint:arch": "eslint --config eslint.architecture.js src/orders",
+    "lint:arch": "eslint --config eslint.architecture.js src/orders src/returns",
     "test:arch": "vitest run src/orders/architecture",
     "demo:tema5": "vitest run examples/tema5",
     "demo:tema6": "vitest run examples/tema6",
