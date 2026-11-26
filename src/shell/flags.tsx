@@ -4,10 +4,11 @@
 // Referencia: P. Hodgson, «Feature Toggles (aka Feature Flags)», martinfowler.com (2017).
 import { createContext, useContext, type ReactNode } from 'react';
 
-export type FeatureFlags = { newOrderDetail: boolean };
+export type FeatureFlags = { newOrderDetail: boolean; newReturns: boolean };
 export type FlagName = keyof FeatureFlags;
 
-export const DEFAULT_FLAGS: FeatureFlags = { newOrderDetail: true };
+// Sesión 10 · newReturns nace APAGADO: la heredada sigue siendo la que se ve hasta el paso 6 del plan (?flags=newReturns la enciende).
+export const DEFAULT_FLAGS: FeatureFlags = { newOrderDetail: true, newReturns: false };
 
 /** ?flags=-newOrderDetail apaga · ?flags=newOrderDetail enciende. Lo desconocido se ignora (la URL llega de fuera). */
 export function readFlags(search: string, defaults: FeatureFlags = DEFAULT_FLAGS): FeatureFlags {

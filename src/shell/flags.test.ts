@@ -8,9 +8,14 @@ it('sin parámetro, los valores por defecto', () => {
 
 it('«-nombre» apaga y «nombre» enciende', () => {
   expect(readFlags('?flags=-newOrderDetail').newOrderDetail).toBe(false);
-  expect(readFlags('?flags=newOrderDetail', { newOrderDetail: false }).newOrderDetail).toBe(true);
+  expect(readFlags('?flags=newOrderDetail', { ...DEFAULT_FLAGS, newOrderDetail: false }).newOrderDetail).toBe(true);
 });
 
 it('un flag desconocido no se inventa', () => {
   expect(readFlags('?flags=isAdmin,-cualquierCosa')).toEqual(DEFAULT_FLAGS);
+});
+
+it('Sesión 10 · newReturns nace apagado y se enciende por la URL', () => {
+  expect(DEFAULT_FLAGS.newReturns).toBe(false);
+  expect(readFlags('?flags=newReturns').newReturns).toBe(true);
 });

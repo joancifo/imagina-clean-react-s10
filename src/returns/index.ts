@@ -9,3 +9,7 @@ export { canManageReturns, chargesRestocking, isWithinReturnWindow, needsAdminAp
 export { createHttpReturnsAdapters, createReturnsModule, type ReturnsAdapters, type ReturnsModule } from './composition';
 export { createInMemoryReturnsGateway } from './infrastructure/in-memory-returns-gateway';
 export type { ReturnableOrder } from './domain/returnable-order';
+
+// Paso 5 · pantalla nueva (detrás del flag newReturns, en src/shell/ReturnsRoute.tsx)
+export { ReturnsScreen } from './ui/ReturnsScreen';
+export { ReturnsProvider } from './ui/ReturnsProvider';

@@ -5,6 +5,7 @@ import App from './App';
 import { AppStoreProvider } from './store/appStore';
 import { createBufferedLogger, createHttpLogSink, ObservabilityProvider } from './observability';
 import { createHttpAdapters, createOrdersModule, OrdersProvider } from './orders';
+import { createHttpReturnsAdapters, createReturnsModule, ReturnsProvider } from './returns';
 import { createHttpSessionGateway, SessionProvider } from './session';
 import { DEFAULT_FLAGS, FlagsProvider, readFlags } from './shell/flags';
 import './styles.css';
@@ -19,6 +20,8 @@ setInterval(() => void logger.flush(), 10_000);
 window.addEventListener('pagehide', () => void logger.flush());
 
 const orders = createOrdersModule(createHttpAdapters(fetchFn, logger));
+// Sesión 10 · Devoluciones habla con el BFF (server/returns.mjs) por su propio adapter.
+const returns = createReturnsModule(createHttpReturnsAdapters(fetchFn));
 const sessionGateway = createHttpSessionGateway(fetchFn);
 // Sesión 7 · Flags: por defecto, el detalle nuevo. ?flags=-newOrderDetail vuelve al heredado (vuelta atrás sin desplegar).
 const flags = readFlags(window.location.search, DEFAULT_FLAGS);
@@ -31,7 +34,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <SessionProvider gateway={sessionGateway}>
             <AppStoreProvider>
               <OrdersProvider module={orders}>
-                <App />
+                <ReturnsProvider module={returns}>
+                  <App />
+                </ReturnsProvider>
               </OrdersProvider>
             </AppStoreProvider>
           </SessionProvider>
