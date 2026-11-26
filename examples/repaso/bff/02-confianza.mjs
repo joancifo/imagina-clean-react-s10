@@ -28,8 +28,8 @@ export function createTrustedBff() {
   app.use(express.json());
 
   // Inicio de sesión de juguete: en OrderDesk, POST /api/session. La cookie: HttpOnly, SameSite y firmada.
-  // OrderDesk usa SameSite=Strict (no viaja en ninguna petición iniciada desde otro sitio); aquí, Lax, el valor por defecto
-  // de los navegadores: viaja al llegar desde un enlace externo, por eso NADA que cambie estado puede ir por GET.
+  // OrderDesk usa SameSite=Strict: no viaja en ninguna petición iniciada desde otro sitio. Aquí, Lax (lo que aplica Chrome
+  // si la cookie no dice nada): viaja al llegar desde un enlace externo, por eso NADA que cambie estado puede ir por GET.
   app.post('/api/session', (req, res) => {
     if (!USERS[req.body?.userId]) return res.status(401).end();
     res.setHeader('set-cookie', `sid=${sign(req.body.userId)}; HttpOnly; SameSite=Lax; Path=/`);
