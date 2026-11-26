@@ -71,6 +71,7 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 | `npm run demo:tema20` | Localizadores, esperas y red en un navegador real |
 | `npm run e2e:report` | Abre el último informe de Playwright (con trazas de los fallos) |
 | `npm run test:pipeline` | El workflow de CI como especificación: lo que se puede leer en `.github/workflows/ci.yml` |
+| `npm run repaso:adapter` · `npm run repaso:bff` | El repaso de Adapters y BFF, nivel a nivel |
 | `npm run lab:red` | La red de caracterización de Devoluciones heredada |
 | `npm run lab:rules` | Las reglas puras de Devoluciones (`src/returns`) |
 | `npm run lab:check` | Tipos, red, reglas y fronteras: la comprobación de cada paso del laboratorio |
@@ -180,7 +181,7 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 - `docs/ejercicio-s9.md` — ejercicio de la sesión
 
 ## Material de la Sesión 10
-- `examples/repaso/adapter-o-bff.md` — repaso: ¿dominio, adapter, BFF o pantalla?
+- `examples/repaso/` — repaso de Adapters y BFF desde cero, en cuatro niveles ejecutables (`npm run repaso:adapter`, `npm run repaso:bff`) y la dinámica `adapter-o-bff.md`
 - `docs/guia-de-decision.md` — matriz de decisión, señales, coste de cada patrón y checklist de revisión (Tema 23)
 - `examples/tema23/escenarios.md` — cinco escenarios para decidir cuánta arquitectura necesitan
 - `AGENTS.md` — instrucciones para cualquier agente de código (Tema 24)
