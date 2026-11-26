@@ -15,7 +15,11 @@ export default tseslint.config(
     files: LEGACY,
     rules: {
       'no-restricted-imports': ['error', {
-        patterns: [{ group: ['**/orders/**'], message: 'Usa Pedidos a través de su API pública: import { … } from "../orders".' }],
+        patterns: [
+          { group: ['**/orders/**'], message: 'Usa Pedidos a través de su API pública: import { … } from "../orders".' },
+          // Sesión 10 · Devoluciones nace con la misma regla: desde fuera, solo su API pública.
+          { group: ['**/returns/**'], message: 'Usa Devoluciones a través de su API pública: import { … } from "../returns".' },
+        ],
       }],
     },
   },

@@ -14,7 +14,7 @@
 | 7 | 23 nov | Medición de rendimiento, refactor incremental y estrategia de testing |
 | 8 | 25 nov | Tests unitarios, de componentes y de integración |
 | 9 | 26 nov | E2E crítico, mejoras de CI/CD y ADR |
-| 10 | 30 nov | Entorno de IA reutilizable y presentación: decisiones, trade-offs, métricas y plan de evolución |
+| 10 | 30 nov | Entorno de IA reutilizable (`AGENTS.md`, instrucciones por ruta y skills) y el flujo completo sobre código heredado: mapa, red, plan y primer paso (Devoluciones) |
 
 ## Criterios de evaluación
 - Evidencia: cada decisión se apoya en código, medición o test.

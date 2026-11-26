@@ -70,3 +70,11 @@ Este repositorio es material de formación con code smells intencionados en el c
 - Al revisar un PR: comenta con Conventional Comments (`issue`, `suggestion`, `question`, `nitpick`, `praise`), indica si es bloqueante y cita `ruta:línea`. Prioriza límites de capa, datos de fuera sin parsear, secretos y datos personales, y tests que no comprueban. No comentes estilo que ya resuelven las herramientas. No apruebes: la decisión es de una persona.
 - Un cambio de arquitectura sin ADR en `docs/adr/` (formato en `docs/adr/README.md`) es un hallazgo de revisión.
 
+
+## Sesión 10 · Código heredado con IA
+- `AGENTS.md` resume estas reglas para cualquier agente; si cambias una, cambia las dos.
+- Con código heredado, el orden es siempre: mapa con evidencia → red de caracterización → plan de pasos pequeños → un paso cada vez con la red en verde.
+- Un test de caracterización lleva el valor OBSERVADO al ejecutar, no el que parezca correcto. Las rarezas se marcan `// RAREZA · …` y se preguntan en `docs/devoluciones/plan.md`.
+- Al extraer reglas de una pantalla heredada, se copian tal cual. No «mejores» redondeos, comparaciones ni fórmulas en el mismo paso.
+- Devoluciones (`src/pages/ReturnsPage.tsx` → `src/returns/`): ver `.github/instructions/returns.instructions.md`. El importe y la autorización los decide el servidor.
+- Antes de proponer una abstracción, nombra la señal de `docs/guia-de-decision.md` (sección 2) que la justifica. Si no hay señal, no la propongas.

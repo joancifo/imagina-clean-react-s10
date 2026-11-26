@@ -9,6 +9,7 @@ import policy from '../shared/policy.json' with { type: 'json' };
 import telemetry from '../shared/telemetry.json' with { type: 'json' };
 import { createSessionToken, readCookie, readSessionToken, sessionSecret } from './session.mjs';
 import { createStore, USERS } from './store.mjs';
+import { createReturnsStore, legacyReturnsRoutes } from './returns-legacy.mjs';
 
 const COOKIE = policy.session.cookieName;
 
@@ -76,8 +77,9 @@ function isValidEntry(entry) {
 /** Destino por defecto de la telemetría: una línea JSON por entrada en la salida estándar (lo recoge la plataforma). */
 const stdoutTelemetry = (line) => console.log(JSON.stringify(line));
 
-export function createBff({ seed, secret = sessionSecret(), now = () => new Date(), telemetrySink = stdoutTelemetry, testing = false } = {}) {
+export function createBff({ seed, returnsSeed, secret = sessionSecret(), now = () => new Date(), telemetrySink = stdoutTelemetry, testing = false } = {}) {
   let store = createStore(seed); // `let`: solo el reinicio de los E2E (Sesión 9) lo sustituye
+  let returns = createReturnsStore(returnsSeed); // Sesión 10 · devoluciones y transportista (API heredada)
   const app = express();
   app.use(express.json({ limit: '32kb' }));
 
@@ -151,12 +153,18 @@ export function createBff({ seed, secret = sessionSecret(), now = () => new Date
     return res.status(204).end();
   });
 
+  // Sesión 10 · API HEREDADA de devoluciones y del transportista, montada TAL CUAL detrás de la sesión.
+  // El BFF aquí solo hace de pasarela: no autoriza, no calcula y no recorta. Es el punto de partida del laboratorio.
+  app.use(['/api/carrier', '/api/returns'], authenticated);
+  app.use('/api', legacyReturnsRoutes({ store: () => returns, now }));
+
   // Sesión 9 · Solo para los E2E (server/e2e.mjs): volver a los datos de partida antes de CADA test.
   // Sin esto, el orden de los tests decide el resultado: el que cancela P-1005 rompe al que lo aprueba.
   // Apagado por defecto: server/index.mjs no lo enciende y server/bff.test.mjs comprueba que no existe.
   if (testing) {
     app.post('/api/testing/reset', (_req, res) => {
       store = createStore(seed);
+      returns = createReturnsStore(returnsSeed);
       res.status(204).end();
     });
   }

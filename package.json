@@ -1,7 +1,7 @@
 {
   "name": "orderdesk",
   "private": true,
-  "version": "0.17.0",
+  "version": "0.18.0",
   "type": "module",
   "description": "Backoffice de pedidos ficticio con code smells sembrados para el curso de Clean Architecture",
   "scripts": {
@@ -58,7 +58,10 @@
     "test:e2e:smoke": "playwright test --project=e2e --grep @smoke",
     "demo:tema20": "playwright test --project=demo",
     "e2e:report": "playwright show-report",
-    "test:pipeline": "vitest run scripts/pipeline.test.mjs"
+    "test:pipeline": "vitest run scripts/pipeline.test.mjs",
+    "lab:red": "vitest run src/pages/returns.characterization.test.tsx",
+    "lab:rules": "vitest run src/returns",
+    "lab:check": "tsc --noEmit && vitest run src/pages/returns.characterization.test.tsx src/returns && eslint --config eslint.boundaries.js src"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.107.1",

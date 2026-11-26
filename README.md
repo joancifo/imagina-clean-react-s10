@@ -71,6 +71,9 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 | `npm run demo:tema20` | Localizadores, esperas y red en un navegador real |
 | `npm run e2e:report` | Abre el último informe de Playwright (con trazas de los fallos) |
 | `npm run test:pipeline` | El workflow de CI como especificación: lo que se puede leer en `.github/workflows/ci.yml` |
+| `npm run lab:red` | La red de caracterización de Devoluciones heredada |
+| `npm run lab:rules` | Las reglas puras de Devoluciones (`src/returns`) |
+| `npm run lab:check` | Tipos, red, reglas y fronteras: la comprobación de cada paso del laboratorio |
 
 ## Material de la Sesión 1
 - `examples/tema1/` — ejemplos ejecutables del Tema 1
@@ -176,7 +179,20 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 - `prompts/sesion-9.md` — prompts de GitHub Copilot
 - `docs/ejercicio-s9.md` — ejercicio de la sesión
 
-Trabaja en una rama propia por sesión: `git checkout -b s9/<tu-nombre>`.
+## Material de la Sesión 10
+- `examples/repaso/adapter-o-bff.md` — repaso: ¿dominio, adapter, BFF o pantalla?
+- `docs/guia-de-decision.md` — matriz de decisión, señales, coste de cada patrón y checklist de revisión (Tema 23)
+- `examples/tema23/escenarios.md` — cinco escenarios para decidir cuánta arquitectura necesitan
+- `AGENTS.md` — instrucciones para cualquier agente de código (Tema 24)
+- `.github/instructions/returns.instructions.md` y `.github/skills/` — `/mapear-modulo`, `/caracterizar` y `/planificar-refactor`
+- `src/pages/ReturnsPage.tsx` y `server/returns-legacy.mjs` — Devoluciones heredada: el código del laboratorio (`/orders/P-1004/returns`)
+- `src/pages/returns-harness.tsx` y `returns.characterization.test.tsx` — el arnés y la red de caracterización
+- `src/returns/` — la feature Devoluciones: reglas puras y API pública (primer paso del plan)
+- `docs/devoluciones/mapa.md` y `plan.md` — plantillas del mapa y del plan de refactor
+- `prompts/sesion-10.md` — prompts de GitHub Copilot
+- `docs/ejercicio-s10.md` — el laboratorio
+
+Trabaja en una rama propia por sesión: `git checkout -b s10/<tu-nombre>`.
 
 ## Entorno
 `SESSION_SECRET` firma la cookie de sesión del BFF. En desarrollo hay un valor por defecto; en cualquier otro sitio, se pasa por variable de entorno. Nada que empiece por `VITE_` puede contener un secreto: viaja en el bundle.
