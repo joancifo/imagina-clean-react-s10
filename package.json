@@ -61,7 +61,9 @@
     "test:pipeline": "vitest run scripts/pipeline.test.mjs",
     "lab:red": "vitest run src/pages/returns.characterization.test.tsx",
     "lab:rules": "vitest run src/returns",
-    "lab:check": "tsc --noEmit && vitest run src/pages/returns.characterization.test.tsx src/returns && eslint --config eslint.boundaries.js src"
+    "lab:check": "tsc --noEmit && vitest run src/pages/returns.characterization.test.tsx src/returns && eslint --config eslint.boundaries.js src",
+    "repaso:adapter": "vitest run examples/repaso/adapter",
+    "repaso:bff": "vitest run examples/repaso/bff"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.107.1",
