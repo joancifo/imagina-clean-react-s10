@@ -1,7 +1,7 @@
 # Solución Sesión 10 · Guía del profesor
 
 Rama `solucion-s10`, un commit por paso del plan (`git log --oneline main..solucion-s10`).
-Verificado: `npm test` 750 en verde, `npm run test:e2e` 4 en verde, `lint:arch` (ahora `src/orders` y `src/returns`), `lint:boundaries`, `typecheck`, `audit:secrets`, `build` y `perf:budget` (68,2 kB, DENTRO).
+Verificado: `npm test` 771 en verde, `npm run test:e2e` 4 en verde, `lint:arch` (ahora `src/orders` y `src/returns`), `lint:boundaries`, `typecheck`, `audit:secrets`, `build` y `perf:budget` (68,2 kB, DENTRO).
 
 | Commit | Paso del plan |
 |---|---|
@@ -11,18 +11,22 @@ Verificado: `npm test` 750 en verde, `npm run test:e2e` 4 en verde, `lint:arch` 
 | `feat(returns): puerto, adapter HTTP con parser, fake y casos de uso` | 4 |
 | `feat(returns): pantalla nueva detrás del flag newReturns` | 5 |
 
-## Repaso · ¿Dónde va? (`examples/repaso/adapter-o-bff.md`)
-Respuestas: **1A · 2B · 3D (y B) · 4A y P · 5B · 6B · 7P (pregunta a D) · 8A**.
+## Repaso · Adapters y BFF desde cero (`examples/repaso/`)
+Cuatro niveles por pieza, de junior a senior, con `npm run repaso:adapter` (12 tests) y `npm run repaso:bff` (9 tests). En directo:
+- Nivel 1 del adapter: en `01-sin-adapter.ts`, cambia `fakeBackend()` por `fakeBackend({ version: 2 })` en la consola de Vitest (o lee el segundo test): la cabecera dice «Pendiente» y el botón desaparece, sin un solo error.
+- Nivel 2 del BFF: `node examples/repaso/bff/serve.mjs` y abre `http://localhost:3201/api/return-screen/P-1004` en el navegador.
+- Nivel 4 del BFF: el test «Promise.all: si el transportista cae…» frente a «allSettled…».
+
+### Dinámica ¿Dónde va? (`examples/repaso/adapter-o-bff.md`)
+Respuestas: **1A · 2B · 3D (y B) · 4A y P · 5B · 6B**.
 | # | Respuesta | Por qué |
 |---|---|---|
-| 1 | A | Traducir nombres del backend es trabajo del adapter (`order-mapper.ts`). El dominio no sabe que existe `ord_st` |
+| 1 | A | Traducir nombres del backend es trabajo del adapter (mapper). El dominio no sabe que existe `ord_st` |
 | 2 | B | Lo que no puede ver, no viaja (`visibleFor`). Ocultarlo en la pantalla es autorización visual, no real |
 | 3 | D, y B | Regla con dinero: función pura del dominio. El BFF la vuelve a calcular con los mismos números (`shared/policy.json`) y un test de contrato comprueba que coinciden |
 | 4 | A y P | El adapter traduce 503 a `unavailable` (código estable). El texto lo elige la pantalla (`*-messages.ts`): es UX |
 | 5 | B | Agregación: la pantalla espera una vez. Es el `return-context` del paso 3 |
 | 6 | B | `process.env` en Node. Nada `VITE_` con un secreto: viaja en el bundle |
-| 7 | P | El texto es de la pantalla; la condición, del dominio (`chargesRestocking`) |
-| 8 | A | La frontera parsea: `null` significa «no lo sé / no entregado» y se modela así (Sesión 8) |
 
 ## Tema 23 · Juicio rápido (`examples/tema23/escenarios.md`)
 | # | Aproximación | No aplicaría | Señal |
