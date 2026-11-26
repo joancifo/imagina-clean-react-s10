@@ -10,6 +10,7 @@ import telemetry from '../shared/telemetry.json' with { type: 'json' };
 import { createSessionToken, readCookie, readSessionToken, sessionSecret } from './session.mjs';
 import { createStore, USERS } from './store.mjs';
 import { createReturnsStore, legacyReturnsRoutes } from './returns-legacy.mjs';
+import { mountReturnRoutes } from './returns.mjs';
 
 const COOKIE = policy.session.cookieName;
 
@@ -155,6 +156,9 @@ export function createBff({ seed, returnsSeed, secret = sessionSecret(), now = (
 
   // Sesión 10 · API HEREDADA de devoluciones y del transportista, montada TAL CUAL detrás de la sesión.
   // El BFF aquí solo hace de pasarela: no autoriza, no calcula y no recorta. Es el punto de partida del laboratorio.
+  // Paso 3 del plan (solucion-s10): las rutas NUEVAS, donde el servidor calcula y autoriza. Las heredadas siguen
+  // debajo hasta que la pantalla heredada desaparezca (pasos 6 y 7).
+  mountReturnRoutes(app, { authenticated, orders: () => store, returns: () => returns, now, fail });
   app.use(['/api/carrier', '/api/returns'], authenticated);
   app.use('/api', legacyReturnsRoutes({ store: () => returns, now }));
 
