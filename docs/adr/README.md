@@ -12,6 +12,7 @@ Un ADR registra **una** decisión de arquitectura: el contexto que la provocó, 
 | [005](005-migracion-y-observabilidad.md) | Migración incremental y observabilidad | 7 | aceptado |
 | [006](006-estrategia-de-pruebas.md) | Validación en la frontera y estrategia de pruebas | 8 | aceptado |
 | [007](007-e2e-y-ci.md) | E2E críticos y pipeline de CI | 9 | propuesto |
+| [008](008-devoluciones.md) | Devoluciones: feature propia, importe y autorización en el BFF, migración detrás de un flag | 10 | propuesto |
 
 ## Cuándo se escribe uno
 Cuando la decisión cumple al menos una de estas condiciones:

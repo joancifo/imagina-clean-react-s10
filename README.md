@@ -191,6 +191,7 @@ Usuario activo: clave `userId` de `localStorage` (`u1` admin, `u2` manager, `u3`
 - `docs/devoluciones/mapa.md` y `plan.md` — plantillas del mapa y del plan de refactor
 - `prompts/sesion-10.md` — prompts de GitHub Copilot
 - `docs/ejercicio-s10.md` — el laboratorio
+- `docs/adr/008-devoluciones.md`, `server/returns.mjs` y `src/returns/` completo — el plan ejecutado (rama `solucion-s10`)
 
 Trabaja en una rama propia por sesión: `git checkout -b s10/<tu-nombre>`.
 
